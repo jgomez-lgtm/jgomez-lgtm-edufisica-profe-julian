@@ -256,6 +256,46 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
 .tab-d.on{background:var(--green);border-color:var(--green);color:#fff}
 .btn-logout{font-size:13px;color:var(--muted);background:none;border:1px solid var(--line);padding:6px 14px;border-radius:8px;font-weight:600}
 .btn-logout:hover{border-color:var(--bad);color:var(--bad)}
+
+/* ====== TORNEOS ====== */
+.tz-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
+.tz-head h2{font-family:var(--serif);font-weight:700;font-size:21px;color:var(--green-d)}
+.badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.badge-curso{background:rgba(62,134,174,.14);color:var(--blue)}
+.badge-fin{background:rgba(46,107,58,.14);color:var(--green-d)}
+.badge-prog{background:rgba(198,154,59,.16);color:var(--gold-d)}
+.tz-lock{max-width:420px;margin:30px auto;text-align:center}
+.tz-lock .ico{width:52px;height:52px;margin:0 auto 14px;border-radius:15px;background:var(--parch-2);color:var(--gold-d);display:grid;place-items:center}
+.tz-teamform textarea{width:100%;font-family:var(--sans);font-size:15px;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;min-height:88px;resize:vertical}
+.tz-toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.tz-toolbar button{background:#fff;border:1.5px solid var(--line);color:var(--muted);font-weight:700;font-size:13px;padding:8px 14px;border-radius:999px}
+.tz-toolbar button.on{background:var(--green);border-color:var(--green);color:#fff}
+.tz-jornada{font-family:var(--serif);font-weight:700;font-size:13.5px;color:var(--gold-d);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 8px}
+.tz-detalle{font-size:12.5px;color:var(--muted);margin-top:6px}
+.tz-empty-org{background:var(--white);border:1.5px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted);font-size:13.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{display:inline-flex;align-items:center;gap:7px;background:var(--parch-2);border:1px solid var(--line);border-radius:999px;padding:6px 8px 6px 13px;font-size:13.5px;font-weight:600;color:var(--ink)}
+.chip button{background:none;border:none;color:var(--muted);font-weight:800;width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-size:13px;line-height:1}
+.chip button:hover{background:rgba(180,86,47,.15);color:var(--bad)}
+.matchcard{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin-bottom:10px}
+.matchcard .mtop{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between}
+.matchcard .mvs{font-weight:700;font-size:15px}
+.matchcard .mvs .mres{color:var(--green-d);font-family:var(--serif);font-weight:800}
+.matchcard .mjor{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.btn-sm{background:var(--white);border:1.5px solid var(--line);color:var(--green-d);font-weight:700;padding:8px 14px;border-radius:9px;font-size:13px}
+.btn-sm:hover{border-color:var(--green)}
+.btn-sm-bad{border-color:transparent;color:var(--bad)}
+.planilla{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);display:grid;gap:10px}
+.setrow,.qrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.setrow label,.qrow label{width:96px;font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.setrow input,.qrow input{width:70px;text-align:center;padding:8px;font-size:15px;font-weight:700}
+.miniadd{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:4px}
+.miniadd .field{margin-bottom:0;flex:1;min-width:120px}
+.minilist{display:grid;gap:6px;margin-top:8px}
+.minilist .mi{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--parch);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:13.5px}
+.minilist .mi button{background:none;border:none;color:var(--bad);font-weight:700;font-size:12.5px}
+.tz-select-card{max-width:640px;margin-bottom:18px}
+.tz-orgtabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px}
 </style>
 </head>
 <body>
@@ -502,7 +542,11 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
   <div class="page">
     <div class="eyebrow">Educación Física</div>
     <h1 class="ptitle">Torneos</h1>
-    <p class="psub">Tablas de posiciones y calendario de los torneos internos.</p>
+    <p class="psub">Interclases tiempo libre — voleibol, microfútbol y baloncesto: equipos, fixture, resultados y tabla de posiciones.</p>
+    <div class="tabs" id="tzTabs">
+      <button class="tab" id="tzTabPublico" onclick="torneosIrA('publico')">Torneos<small>Fixture, resultados y posiciones</small></button>
+      <button class="tab" id="tzTabOrg" onclick="torneosIrA('organizador')">Organizador<small>Crear y administrar</small></button>
+    </div>
     <div id="body_torneos"></div>
   </div>
   <div class="foot">Institución Educativa <b>Jesús María Rojas Pagola</b> · Santa Bárbara, Antioquia · <b>Ciencia y Progreso</b></div>
@@ -566,8 +610,8 @@ var SECCIONES = {
     promesa:"el espacio para subir la foto o el video que muestra que hiciste el reto de tu grado." },
 
   torneos: { orden:6, visible:true, titulo:"Torneos",
-    desc:"Posiciones y calendario de los torneos internos.",
-    promesa:"las tablas de posiciones y el calendario de los torneos internos del colegio, jornada por jornada." },
+    desc:"Crea y consulta torneos interclases: fixture, resultados y posiciones.",
+    promesa:"los torneos interclases de voleibol, microfútbol y baloncesto, con su fixture, resultados y tabla de posiciones." },
 
   diario: { orden:7, visible:true, titulo:"Diario",
     desc:"Registra tus minutos de actividad física.",
@@ -1452,16 +1496,38 @@ var RETOS = [
 
 ];
 
-/* --- TORNEOS --------------------------------------------------------
-   tabla: un objeto por equipo con pj (jugados), pg, pe, pp.
-   Los puntos se calculan solos (3 por victoria, 1 por empate); si tu
-   deporte usa otro puntaje, escribe pts a mano en cada equipo.         */
-var TORNEOS = [
-  // { nombre:"Copa interclases de microfútbol", categoria:"Grados 9.° a 11.°", estado:"En curso",
-  //   tabla:[ {equipo:"11-1", pj:2, pg:2, pe:0, pp:0},
-  //           {equipo:"10-2", pj:2, pg:1, pe:0, pp:1} ],
-  //   partidos:[ {fecha:"Mar 12 de agosto", local:"11-1", visitante:"10-2", lugar:"Cancha principal", marcador:""} ] }
-];
+/* --- TORNEOS -----------------------------------------------------------
+   Módulo de torneos "Interclases Tiempo Libre". A diferencia de Recursos
+   o Retos, aquí NO se edita una lista fija en el código: el profesor crea
+   los torneos desde el botón "Organizador" dentro de la propia página,
+   con la clave de acceso que definas abajo.
+
+   IMPORTANTE — cómo se guardan los datos:
+   Esta página es un sitio estático (sin servidor propio). Por defecto,
+   torneos, equipos y resultados se guardan en el almacenamiento local
+   (localStorage) del NAVEGADOR donde se crean, así que si el profesor
+   administra siempre desde el mismo computador, funciona ahí sin más.
+
+   Para que TODOS (estudiantes, desde cualquier dispositivo) vean la misma
+   tabla de posiciones, pega la URL del Web App de Apps Script (conectado
+   a tu hoja de cálculo) en TORNEOS.ENDPOINT, un par de líneas más abajo.
+   Con el ENDPOINT configurado, la página:
+     • Envía cada cambio (crear torneo, resultado, estado) a la hoja.
+     • Al entrar a "Torneos" trae automáticamente la versión más reciente
+       de la hoja, así que se ve igual desde cualquier navegador.
+   El código de Apps Script (Code.gs) para pegar en script.google.com se
+   entrega aparte, junto con el paso a paso de despliegue.
+   ------------------------------------------------------------------------ */
+var ORGANIZADOR_CLAVE = "jmrp2026"; // Cambia esta clave. Es solo un filtro
+                                     // básico: cualquiera con acceso al
+                                     // código fuente de la página puede
+                                     // leerla, así que no la uses para
+                                     // datos sensibles. Si la cambias aquí,
+                                     // cambia también CLAVE_ORGANIZADOR en
+                                     // el Code.gs para que coincidan.
+var TORNEOS = { ENDPOINT:"https://script.google.com/macros/s/AKfycbwZom2Ehtdj-cP9QTfQn8SoZOQ92LWjnF8XbQWksqBXEYty-aDDJtOg2AQOpIl9ry9s/exec" };
+var DEPORTES_TORNEO = ["Voleibol","Microfútbol","Baloncesto"];
+var MODALIDAD_TORNEO = "Interclases Tiempo Libre";
 
 /* --- DIARIO DE ACTIVIDAD FÍSICA -------------------------------------
    Para activarlo necesitas una hoja de cálculo con su propio Apps
@@ -1708,7 +1774,7 @@ function route(){
   if(h==="herramientas") renderHerramientas();
   if(h==="retos")    renderRetos();
   if(h==="evidencias") renderEvidencias();
-  if(h==="torneos")  renderTorneos();
+  if(h==="torneos")  { renderTorneos(); tzSincronizar(); }
   if(h==="diario")   renderDiario();
   if(h==="inicio")   renderMenu();
   go(RUTAS[h]);
@@ -2007,41 +2073,365 @@ function comprimirFoto(file,cb){
   fr.readAsDataURL(file);
 }
 
-/* ====== TORNEOS ====== */
-function puntosDe(t,e){
-  if(e.pts!=null) return e.pts;
-  var r=t.puntos||{victoria:3,empate:1,derrota:0};
-  return (e.pg||0)*r.victoria+(e.pe||0)*(r.empate||0)+(e.pp||0)*(r.derrota||0);
+/* ====== TORNEOS — "Interclases Tiempo Libre" ======
+   Módulo dinámico: el profesor crea los torneos, los equipos, genera el
+   fixture y registra los resultados desde la pestaña "Organizador" (con
+   la clave ORGANIZADOR_CLAVE definida arriba). Los estudiantes ven todo
+   en modo lectura desde la pestaña "Torneos".
+   Los datos se guardan en localStorage del navegador (ver nota junto a
+   ORGANIZADOR_CLAVE). Si más adelante defines TORNEOS.ENDPOINT, cada
+   cambio también se intenta enviar a esa hoja de cálculo.                */
+var TZ_KEY="jmrp_torneos_v1";
+var TZ_SESSION_KEY="jmrp_organizador_ok";
+var tzCache=null;                // copia en memoria (evita releer localStorage todo el tiempo)
+var tzClaveOK="";                // clave con la que el organizador entró (se envía al guardar)
+var tzVista="publico";           // "publico" | "organizador"
+var tzFiltroDeporte="Todos";     // filtro de la vista pública
+var tzPlanillaAbierta=null;      // id del partido con la planilla desplegada
+var tzEditando=null;             // id del torneo en edición (agregar equipos)
+
+/* ---- almacenamiento: copia local (localStorage) + hoja de Google (si TORNEOS.ENDPOINT
+   está configurado). La copia local hace que la página cargue rápido incluso sin
+   internet; tzSincronizar() trae la versión más reciente de la hoja de cálculo
+   para que todos los dispositivos vean los mismos torneos. ---- */
+function tzCargar(){
+  if(tzCache!==null) return tzCache;
+  try{ var raw=localStorage.getItem(TZ_KEY); tzCache=raw?JSON.parse(raw):[]; }
+  catch(e){ tzCache=[]; }
+  return tzCache;
 }
+function tzGuardar(lista){
+  tzCache=lista;
+  try{ localStorage.setItem(TZ_KEY,JSON.stringify(lista)); }catch(e){}
+  if(TORNEOS.ENDPOINT){
+    try{ fetch(TORNEOS.ENDPOINT,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({tipo:"torneos",clave:tzClaveOK,actualizado:new Date().toISOString(),data:lista})}); }catch(e){}
+  }
+}
+function tzSincronizar(){
+  if(!TORNEOS.ENDPOINT) return;
+  fetch(TORNEOS.ENDPOINT+(TORNEOS.ENDPOINT.indexOf("?")>=0?"&":"?")+"accion=torneos")
+    .then(function(r){ return r.json(); })
+    .then(function(json){
+      if(json&&json.ok&&Array.isArray(json.data)){
+        tzCache=json.data;
+        try{ localStorage.setItem(TZ_KEY,JSON.stringify(json.data)); }catch(e){}
+        if($("#tzTabPublico")) renderTorneos();
+      }
+    })
+    .catch(function(){ /* sin internet: seguimos con la copia local guardada */ });
+}
+function tzIdNuevo(prefijo){ return prefijo+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,6); }
+function tzBuscar(lista,id){ for(var i=0;i<lista.length;i++){ if(lista[i].id===id) return lista[i]; } return null; }
+
+/* ---- generación del fixture: todos contra todos, sin fechas (método del círculo) ---- */
+function tzGenerarFixture(equiposOriginales){
+  var eq=equiposOriginales.slice();
+  var conDescanso=false;
+  if(eq.length%2===1){ eq.push("Descansa"); conDescanso=true; }
+  var n=eq.length, rondas=n-1, mitad=n/2, arr=eq.slice(), jornadas=[];
+  for(var r=0;r<rondas;r++){
+    var partidos=[];
+    for(var i=0;i<mitad;i++){
+      var a=arr[i], b=arr[n-1-i];
+      if(a!=="Descansa"&&b!=="Descansa"){
+        partidos.push({ id:tzIdNuevo("p"), equipoA:a, equipoB:b });
+      }
+    }
+    jornadas.push({ jornada:r+1, partidos:partidos });
+    var ultimo=arr.pop(); arr.splice(1,0,ultimo);
+  }
+  return jornadas;
+}
+
+/* ---- tabla de posiciones (calculada a partir de los resultados) ---- */
+function tzPosiciones(t){
+  var stats={};
+  (t.equipos||[]).forEach(function(eq){ stats[eq]={equipo:eq,pj:0,pg:0,pe:0,pp:0,gf:0,gc:0}; });
+  (t.fixture||[]).forEach(function(j){
+    j.partidos.forEach(function(p){
+      var r=(t.resultados||{})[p.id];
+      if(!r||!r.jugado) return;
+      var a=stats[p.equipoA], b=stats[p.equipoB];
+      if(!a||!b) return;
+      a.pj++; b.pj++; a.gf+=r.marcadorA; a.gc+=r.marcadorB; b.gf+=r.marcadorB; b.gc+=r.marcadorA;
+      if(r.marcadorA>r.marcadorB){ a.pg++; b.pp++; }
+      else if(r.marcadorA<r.marcadorB){ b.pg++; a.pp++; }
+      else { a.pe++; b.pe++; }
+    });
+  });
+  var arr=Object.keys(stats).map(function(k){ return stats[k]; });
+  arr.forEach(function(e){
+    var ptsEmpate=(t.deporte==="Microfútbol")?e.pe:0;
+    e.pts=e.pg*2+ptsEmpate; e.dif=e.gf-e.gc;
+  });
+  arr.sort(function(x,y){ return y.pts-x.pts || y.dif-x.dif || y.gf-x.gf; });
+  return arr;
+}
+function tzEtiquetaGol(deporte){ return deporte==="Baloncesto"?"Pts":(deporte==="Voleibol"?"Sets":"Goles"); }
+
+/* ---- texto de detalle de un resultado ya jugado ---- */
+function tzDetalleTexto(t,r){
+  if(!r||!r.detalle) return "";
+  var d=r.detalle;
+  if(t.deporte==="Microfútbol"){
+    return "1er tiempo "+d.t1a+"-"+d.t1b+" · 2do tiempo "+d.t2a+"-"+d.t2b+
+      (d.tarjA||d.tarjB?" · Tarjetas: "+(d.tarjA||0)+"-"+(d.tarjB||0):"");
+  }
+  if(t.deporte==="Baloncesto"){
+    return "Cuartos: "+[d.q1a+"-"+d.q1b,d.q2a+"-"+d.q2b,d.q3a+"-"+d.q3b,d.q4a+"-"+d.q4b].join(", ");
+  }
+  if(t.deporte==="Voleibol"){
+    var sets=(d.sets||[]).filter(function(s){return s.a!==""&&s.b!=="";});
+    return sets.length?("Sets: "+sets.map(function(s){return s.a+"-"+s.b;}).join(", ")):"";
+  }
+  return "";
+}
+
+/* ---- planilla de anotaciones (formulario, distinto según el deporte) ---- */
+function tzPlanillaHTML(t,p,rExistente){
+  var d=(rExistente&&rExistente.detalle)||{};
+  var h='<div class="planilla" id="planilla_'+p.id+'">';
+  if(t.deporte==="Microfútbol"){
+    h+='<div class="qrow"><label>1er tiempo</label>'+
+         '<input type="number" min="0" id="m1a_'+p.id+'" value="'+(d.t1a!=null?d.t1a:"")+'" placeholder="'+esc(p.equipoA)+'">'+
+         '<input type="number" min="0" id="m1b_'+p.id+'" value="'+(d.t1b!=null?d.t1b:"")+'" placeholder="'+esc(p.equipoB)+'"></div>'+
+       '<div class="qrow"><label>2do tiempo</label>'+
+         '<input type="number" min="0" id="m2a_'+p.id+'" value="'+(d.t2a!=null?d.t2a:"")+'" placeholder="'+esc(p.equipoA)+'">'+
+         '<input type="number" min="0" id="m2b_'+p.id+'" value="'+(d.t2b!=null?d.t2b:"")+'" placeholder="'+esc(p.equipoB)+'"></div>'+
+       '<div class="qrow"><label>Tarjetas</label>'+
+         '<input type="number" min="0" id="mta_'+p.id+'" value="'+(d.tarjA!=null?d.tarjA:"")+'" placeholder="'+esc(p.equipoA)+'">'+
+         '<input type="number" min="0" id="mtb_'+p.id+'" value="'+(d.tarjB!=null?d.tarjB:"")+'" placeholder="'+esc(p.equipoB)+'"></div>';
+  } else if(t.deporte==="Baloncesto"){
+    ["q1","q2","q3","q4"].forEach(function(q,i){
+      h+='<div class="qrow"><label>Cuarto '+(i+1)+'</label>'+
+           '<input type="number" min="0" id="b'+q+'a_'+p.id+'" value="'+(d[q+"a"]!=null?d[q+"a"]:"")+'" placeholder="'+esc(p.equipoA)+'">'+
+           '<input type="number" min="0" id="b'+q+'b_'+p.id+'" value="'+(d[q+"b"]!=null?d[q+"b"]:"")+'" placeholder="'+esc(p.equipoB)+'"></div>';
+    });
+  } else { /* Voleibol */
+    var sets=d.sets||[{},{},{}];
+    for(var i=0;i<5;i++){
+      var s=sets[i]||{};
+      h+='<div class="setrow"><label>Set '+(i+1)+'</label>'+
+           '<input type="number" min="0" id="v'+i+'a_'+p.id+'" value="'+(s.a!=null?s.a:"")+'" placeholder="'+esc(p.equipoA)+'">'+
+           '<input type="number" min="0" id="v'+i+'b_'+p.id+'" value="'+(s.b!=null?s.b:"")+'" placeholder="'+esc(p.equipoB)+'"></div>';
+    }
+  }
+  h+='<div style="display:flex;gap:10px;margin-top:4px">'+
+       '<button class="btn btn-primary" style="flex:1" onclick="tzGuardarResultado(\''+t.id+'\',\''+p.id+'\')">Guardar resultado</button>'+
+       '<button class="btn-sm" onclick="tzTogglePlanilla(null)">Cancelar</button></div>'+
+     '</div>';
+  return h;
+}
+function tzTogglePlanilla(pid){ tzPlanillaAbierta=pid; renderTorneos(); }
+
+function tzGuardarResultado(tid,pid){
+  var lista=tzCargar(), t=tzBuscar(lista,tid); if(!t) return;
+  var p=null;
+  (t.fixture||[]).forEach(function(j){ j.partidos.forEach(function(x){ if(x.id===pid) p=x; }); });
+  if(!p) return;
+  var num=function(id){ var v=$("#"+id); if(!v||v.value==="") return 0; return parseInt(v.value,10)||0; };
+  var detalle, marcadorA, marcadorB;
+  if(t.deporte==="Microfútbol"){
+    var t1a=num("m1a_"+pid),t1b=num("m1b_"+pid),t2a=num("m2a_"+pid),t2b=num("m2b_"+pid);
+    detalle={t1a:t1a,t1b:t1b,t2a:t2a,t2b:t2b,tarjA:num("mta_"+pid),tarjB:num("mtb_"+pid)};
+    marcadorA=t1a+t2a; marcadorB=t1b+t2b;
+  } else if(t.deporte==="Baloncesto"){
+    var qa=num("bq1a_"+pid)+num("bq2a_"+pid)+num("bq3a_"+pid)+num("bq4a_"+pid);
+    var qb=num("bq1b_"+pid)+num("bq2b_"+pid)+num("bq3b_"+pid)+num("bq4b_"+pid);
+    detalle={q1a:num("bq1a_"+pid),q1b:num("bq1b_"+pid),q2a:num("bq2a_"+pid),q2b:num("bq2b_"+pid),
+             q3a:num("bq3a_"+pid),q3b:num("bq3b_"+pid),q4a:num("bq4a_"+pid),q4b:num("bq4b_"+pid)};
+    marcadorA=qa; marcadorB=qb;
+  } else {
+    var sets=[], setsA=0, setsB=0;
+    for(var i=0;i<5;i++){
+      var ea=$("#v"+i+"a_"+pid), eb=$("#v"+i+"b_"+pid);
+      var va=ea&&ea.value!==""?parseInt(ea.value,10):"", vb=eb&&eb.value!==""?parseInt(eb.value,10):"";
+      sets.push({a:va,b:vb});
+      if(va!==""&&vb!==""){ if(va>vb) setsA++; else if(vb>va) setsB++; }
+    }
+    detalle={sets:sets}; marcadorA=setsA; marcadorB=setsB;
+  }
+  if(!t.resultados) t.resultados={};
+  t.resultados[pid]={ jugado:true, marcadorA:marcadorA, marcadorB:marcadorB, detalle:detalle };
+  if(t.estado==="Programado") t.estado="En curso";
+  tzGuardar(lista);
+  tzPlanillaAbierta=null;
+  renderTorneos();
+}
+
+/* ---- navegación entre pestañas Torneos / Organizador ---- */
+function torneosIrA(v){
+  tzVista=v; tzPlanillaAbierta=null;
+  $("#tzTabPublico").classList.toggle("on",v==="publico");
+  $("#tzTabOrg").classList.toggle("on",v==="organizador");
+  renderTorneos();
+}
+function torneosSetFiltro(d){ tzFiltroDeporte=d; renderTorneos(); }
+
 function renderTorneos(){
-  var b=$("#body_torneos"), h=borrador("torneos");
-  if(!TORNEOS.length){
+  if(!$("#tzTabPublico")) return; /* la sección aún no está en el DOM */
+  $("#tzTabPublico").classList.toggle("on",tzVista==="publico");
+  $("#tzTabOrg").classList.toggle("on",tzVista==="organizador");
+  if(tzVista==="organizador") tzRenderOrganizador();
+  else tzRenderPublico();
+}
+
+/* ---- vista pública (solo lectura) ---- */
+function tzRenderPublico(){
+  var b=$("#body_torneos"), lista=tzCargar();
+  var deportesUsados=DEPORTES_TORNEO.filter(function(d){ return lista.some(function(t){return t.deporte===d;}); });
+  var h="";
+  if(deportesUsados.length>1){
+    h+='<div class="tz-toolbar">'+
+      '<button class="'+(tzFiltroDeporte==="Todos"?"on":"")+'" onclick="torneosSetFiltro(\'Todos\')">Todos</button>'+
+      deportesUsados.map(function(d){ return '<button class="'+(tzFiltroDeporte===d?"on":"")+'" onclick="torneosSetFiltro(\''+d+'\')">'+esc(d)+'</button>'; }).join("")+
+      '</div>';
+  }
+  var visibles=lista.filter(function(t){ return tzFiltroDeporte==="Todos"||t.deporte===tzFiltroDeporte; });
+  if(!visibles.length){
     b.innerHTML=h+construccion("torneos");
     return;
   }
-  TORNEOS.forEach(function(t){
-    h+='<div class="gsec"><div class="gt"><span>'+esc(t.nombre)+'</span>'+pill(t.estado||"")+'</div>';
-    if(t.categoria) h+='<p class="psub" style="margin:-6px 0 14px">'+esc(t.categoria)+'</p>';
-    var tabla=(t.tabla||[]).slice().sort(function(a,c){ return puntosDe(t,c)-puntosDe(t,a); });
-    if(tabla.length){
-      h+='<table class="tabla"><thead><tr><th></th><th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>Pts</th></tr></thead><tbody>'+
-        tabla.map(function(e,i){
-          return '<tr'+(i===0?' class="lead"':'')+'><td class="pos">'+(i+1)+'</td><td class="eq">'+esc(e.equipo)+'</td>'+
-                 '<td>'+(e.pj||0)+'</td><td>'+(e.pg||0)+'</td><td>'+(e.pe||0)+'</td><td>'+(e.pp||0)+'</td>'+
-                 '<td class="pts">'+puntosDe(t,e)+'</td></tr>';
-        }).join("")+'</tbody></table>';
-    }
-    if(t.partidos&&t.partidos.length){
-      h+='<div class="fix">'+t.partidos.map(function(p){
-        return '<div class="fixrow"><span class="fd">'+esc(p.fecha||"Por definir")+'</span>'+
-               '<span class="fm">'+esc(p.local)+' vs. '+esc(p.visitante)+'</span>'+
-               (p.marcador?'<span class="pill">'+esc(p.marcador)+'</span>':'')+
-               (p.lugar?'<span class="fl">'+esc(p.lugar)+'</span>':'')+'</div>';
-      }).join("")+'</div>';
-    }
-    h+='</div>';
-  });
+  visibles.forEach(function(t){ h+=tzTarjetaTorneo(t,false); });
   b.innerHTML=h;
+}
+
+/* ---- tarjeta de un torneo: encabezado + tabla de posiciones + fixture ---- */
+function tzTarjetaTorneo(t,esOrganizador){
+  var badgeClase=t.estado==="Finalizado"?"badge-fin":(t.estado==="En curso"?"badge-curso":"badge-prog");
+  var h='<div class="gsec"><div class="tz-head"><h2>'+esc(t.nombre)+'</h2>'+
+    '<span class="badge '+badgeClase+'">'+esc(t.estado||"Programado")+'</span>'+
+    '<span class="pill">'+esc(t.deporte)+'</span></div>'+
+    '<p class="psub" style="margin:-4px 0 14px">'+esc(MODALIDAD_TORNEO)+' · '+t.equipos.length+' equipos</p>';
+
+  var pos=tzPosiciones(t), etiqueta=tzEtiquetaGol(t.deporte);
+  if(pos.length){
+    h+='<table class="tabla"><thead><tr><th></th><th>Equipo</th><th>PJ</th><th>G</th>'+
+      (t.deporte==="Microfútbol"?"<th>E</th>":"")+
+      '<th>P</th><th>'+etiqueta+' F</th><th>'+etiqueta+' C</th><th>Dif</th><th>Pts</th></tr></thead><tbody>'+
+      pos.map(function(e,i){
+        return '<tr'+(i===0&&e.pj>0?' class="lead"':'')+'><td class="pos">'+(i+1)+'</td><td class="eq">'+esc(e.equipo)+'</td>'+
+          '<td>'+e.pj+'</td><td>'+e.pg+'</td>'+
+          (t.deporte==="Microfútbol"?'<td>'+e.pe+'</td>':'')+
+          '<td>'+e.pp+'</td><td>'+e.gf+'</td><td>'+e.gc+'</td><td>'+(e.dif>0?"+":"")+e.dif+'</td>'+
+          '<td class="pts">'+e.pts+'</td></tr>';
+      }).join("")+'</tbody></table>';
+  }
+
+  (t.fixture||[]).forEach(function(j){
+    h+='<div class="tz-jornada">Jornada '+j.jornada+'</div>';
+    j.partidos.forEach(function(p){
+      var r=(t.resultados||{})[p.id];
+      var jugado=r&&r.jugado;
+      h+='<div class="matchcard"><div class="mtop"><span class="mvs">'+esc(p.equipoA)+
+        (jugado?' <span class="mres">'+r.marcadorA+' – '+r.marcadorB+'</span> ':' vs. ')+
+        esc(p.equipoB)+'</span>'+
+        (esOrganizador?'<button class="btn-sm" onclick="tzTogglePlanilla(\''+(tzPlanillaAbierta===p.id?"":p.id)+'\')">'+
+          (jugado?"Editar resultado":"Registrar resultado")+'</button>':
+          (jugado?'':'<span class="mjor">Por jugar</span>'))+
+        '</div>'+
+        (jugado?'<div class="tz-detalle">'+esc(tzDetalleTexto(t,r))+'</div>':'')+
+        (esOrganizador&&tzPlanillaAbierta===p.id?tzPlanillaHTML(t,p,r):'')+
+        '</div>';
+    });
+  });
+  if(!(t.fixture||[]).length) h+='<p class="tz-detalle">Este torneo todavía no tiene fixture generado.</p>';
+  h+='</div>';
+  return h;
+}
+
+/* ---- panel del organizador (protegido con clave) ---- */
+function tzDesbloqueado(){ try{ return sessionStorage.getItem(TZ_SESSION_KEY)==="1"; }catch(e){ return false; } }
+function tzIntentarEntrar(){
+  var v=$("#tzClave").value||"";
+  if(v===ORGANIZADOR_CLAVE){
+    tzClaveOK=v;
+    try{ sessionStorage.setItem(TZ_SESSION_KEY,"1"); }catch(e){}
+    renderTorneos();
+  } else {
+    $("#tzClaveErr").textContent="Clave incorrecta.";
+  }
+}
+function tzSalir(){ try{ sessionStorage.removeItem(TZ_SESSION_KEY); }catch(e){} renderTorneos(); }
+
+function tzRenderOrganizador(){
+  var b=$("#body_torneos");
+  if(!tzDesbloqueado()){
+    b.innerHTML='<div class="tz-lock"><div class="ico">'+ICONOS.torneos+'</div>'+
+      '<h3 style="font-family:var(--serif);font-size:19px;margin-bottom:6px">Acceso del organizador</h3>'+
+      '<p class="psub" style="margin-bottom:16px">Escribe la clave para crear y administrar los torneos.</p>'+
+      '<div class="field"><input id="tzClave" type="text" placeholder="Clave de acceso" autocomplete="off" '+
+        'onkeydown="if(event.key===\'Enter\')tzIntentarEntrar()"></div>'+
+      '<div class="err" id="tzClaveErr"></div>'+
+      '<button class="btn btn-primary" style="width:100%" onclick="tzIntentarEntrar()">Entrar</button></div>';
+    return;
+  }
+  var lista=tzCargar();
+  var h='<div style="display:flex;justify-content:flex-end;margin-bottom:10px">'+
+    '<button class="btn-logout" onclick="tzSalir()">Salir del organizador</button></div>'+
+    '<div class="card pcard tz-select-card"><div class="eyebrow">Nuevo torneo</div>'+
+    '<h2 class="ptitle" style="font-size:20px;margin-bottom:12px">Crear torneo interclases</h2>'+
+    '<div class="field"><label for="tzNombre">Nombre del torneo</label>'+
+    '<input id="tzNombre" type="text" placeholder="Ej. Copa Interclases de Voleibol — Periodo 2"></div>'+
+    '<div class="field"><label for="tzDeporte">Deporte</label><select id="tzDeporte">'+
+    DEPORTES_TORNEO.map(function(d){ return '<option>'+esc(d)+'</option>'; }).join("")+'</select></div>'+
+    '<div class="field tz-teamform"><label for="tzEquipos">Equipos participantes (uno por línea)</label>'+
+    '<textarea id="tzEquipos" placeholder="6-1&#10;6-2&#10;7-1&#10;7-2"></textarea></div>'+
+    '<div class="err" id="tzCrearErr"></div>'+
+    '<button class="btn btn-primary" style="width:100%" onclick="tzCrearTorneo()">Crear torneo y generar fixture</button>'+
+    '</div>';
+
+  if(!lista.length){
+    h+='<div class="tz-empty-org">Todavía no has creado ningún torneo. Usa el formulario de arriba para crear el primero.</div>';
+  } else {
+    h+='<div class="eyebrow" style="margin:22px 0 4px">Torneos creados</div>';
+    lista.slice().reverse().forEach(function(t){
+      h+='<div style="position:relative">'+tzTarjetaTorneo(t,true)+
+        '<div style="display:flex;gap:10px;margin:-10px 0 24px">'+
+        '<select onchange="tzCambiarEstado(\''+t.id+'\',this.value)" style="max-width:180px">'+
+          ["Programado","En curso","Finalizado"].map(function(s){
+            return '<option'+(t.estado===s?" selected":"")+'>'+s+'</option>';
+          }).join("")+'</select>'+
+        '<button class="btn-sm" onclick="tzRegenerarFixture(\''+t.id+'\')">Regenerar fixture</button>'+
+        '<button class="btn-sm btn-sm-bad" onclick="tzEliminarTorneo(\''+t.id+'\')">Eliminar torneo</button>'+
+        '</div></div>';
+    });
+  }
+  b.innerHTML=h;
+}
+
+function tzCrearTorneo(){
+  var nombre=($("#tzNombre").value||"").trim();
+  var deporte=$("#tzDeporte").value;
+  var equipos=($("#tzEquipos").value||"").split("\n").map(function(s){return s.trim();}).filter(Boolean);
+  equipos=equipos.filter(function(v,i){ return equipos.indexOf(v)===i; }); /* sin duplicados */
+  if(!nombre||equipos.length<2){
+    $("#tzCrearErr").textContent="Escribe un nombre y al menos 2 equipos.";
+    return;
+  }
+  $("#tzCrearErr").textContent="";
+  var t={ id:tzIdNuevo("tz"), nombre:nombre, deporte:deporte, modalidad:MODALIDAD_TORNEO,
+    equipos:equipos, fixture:tzGenerarFixture(equipos), resultados:{}, estado:"Programado",
+    creado:new Date().toISOString() };
+  var lista=tzCargar(); lista.push(t); tzGuardar(lista);
+  renderTorneos();
+}
+function tzRegenerarFixture(tid){
+  if(!confirm("Esto borra los resultados registrados y crea un fixture nuevo. ¿Continuar?")) return;
+  var lista=tzCargar(), t=tzBuscar(lista,tid); if(!t) return;
+  t.fixture=tzGenerarFixture(t.equipos); t.resultados={}; t.estado="Programado";
+  tzGuardar(lista); renderTorneos();
+}
+function tzCambiarEstado(tid,estado){
+  var lista=tzCargar(), t=tzBuscar(lista,tid); if(!t) return;
+  t.estado=estado; tzGuardar(lista); renderTorneos();
+}
+function tzEliminarTorneo(tid){
+  if(!confirm("¿Eliminar este torneo y todos sus resultados? Esta acción no se puede deshacer.")) return;
+  var lista=tzCargar().filter(function(t){ return t.id!==tid; });
+  tzGuardar(lista); renderTorneos();
 }
 
 /* ====== DIARIO DE ACTIVIDAD FÍSICA ====== */
