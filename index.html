@@ -343,26 +343,9 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
       <button class="btn btn-primary" style="width:100%" onclick="go('select')">Presentar una evaluación</button>
       <div class="aviso"><b>Tratamiento de datos.</b> Al presentar la evaluación se registran tu nombre y número de documento con fines exclusivamente académicos e institucionales, conforme a la Ley 1581 de 2012 (habeas data). El acceso a las respuestas es restringido a la institución.</div>
       <button class="btn-ghost" style="width:100%;margin-top:16px" onclick="irA('inicio')">← Volver al portal</button>
-      <button class="btn-ghost" style="width:100%;margin-top:10px;font-size:12.5px" onclick="go('cargar');renderCargar()">¿Eres el profesor? Cargar una evaluación</button>
+      <button class="btn-ghost" style="width:100%;margin-top:10px;font-size:12.5px" onclick="irAProfesor('evaluaciones')">¿Eres el profesor? Cargar una evaluación</button>
     </div>
   </div>
-</section>
-
-<!-- ===== CARGAR EVALUACIÓN (profesor) ===== -->
-<section id="s_cargar" class="hidden">
-  <div class="topbar"><div class="topbar-in">
-    <img data-crest alt="">
-    <div class="bn">Jesús María Rojas Pagola<small>Ciencia y Progreso</small></div>
-    <div class="spacer"></div>
-    <button class="btn-home" onclick="go('home')">← Evaluaciones</button>
-  </div></div>
-  <div class="page">
-    <div class="eyebrow">Educación Física</div>
-    <h1 class="ptitle">Cargar evaluación</h1>
-    <p class="psub">Sube una evaluación tipo Saber sin tocar el código: pega el texto o sube un archivo y la página arma las preguntas automáticamente.</p>
-    <div id="body_cargar"></div>
-  </div>
-  <div class="foot">Institución Educativa <b>Jesús María Rojas Pagola</b> · Santa Bárbara, Antioquia · <b>Ciencia y Progreso</b></div>
 </section>
 
 <!-- SELECT -->
@@ -571,11 +554,25 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
     <div class="eyebrow">Educación Física</div>
     <h1 class="ptitle">Torneos</h1>
     <p class="psub">Interclases tiempo libre — voleibol, microfútbol y baloncesto: equipos, fixture, resultados y tabla de posiciones.</p>
-    <div class="tabs" id="tzTabs">
-      <button class="tab" id="tzTabPublico" onclick="torneosIrA('publico')">Torneos<small>Fixture, resultados y posiciones</small></button>
-      <button class="tab" id="tzTabOrg" onclick="torneosIrA('organizador')">Organizador<small>Crear y administrar</small></button>
-    </div>
     <div id="body_torneos"></div>
+    <button class="btn-ghost" style="width:100%;margin-top:16px;font-size:12.5px" onclick="irAProfesor('torneos')">¿Eres el profesor? Administrar torneos</button>
+  </div>
+  <div class="foot">Institución Educativa <b>Jesús María Rojas Pagola</b> · Santa Bárbara, Antioquia · <b>Ciencia y Progreso</b></div>
+</section>
+
+<!-- ===== PANEL DEL PROFESOR (unificado) ===== -->
+<section id="s_profesor" class="hidden">
+  <div class="topbar"><div class="topbar-in">
+    <img data-crest alt="">
+    <div class="bn">Jesús María Rojas Pagola<small>Ciencia y Progreso</small></div>
+    <div class="spacer"></div>
+    <button class="btn-home" onclick="irA('inicio')">Inicio</button>
+  </div></div>
+  <div class="page">
+    <div class="eyebrow">Educación Física</div>
+    <h1 class="ptitle">Panel del profesor</h1>
+    <p class="psub">Un solo lugar para administrar torneos, cargar evaluaciones y revisar diario y evidencias.</p>
+    <div id="body_profesor"></div>
   </div>
   <div class="foot">Institución Educativa <b>Jesús María Rojas Pagola</b> · Santa Bárbara, Antioquia · <b>Ciencia y Progreso</b></div>
 </section>
@@ -1553,6 +1550,9 @@ var ORGANIZADOR_CLAVE = "jmrp2026"; // Cambia esta clave. Es solo un filtro
                                      // datos sensibles. Si la cambias aquí,
                                      // cambia también CLAVE_ORGANIZADOR en
                                      // el Code.gs para que coincidan.
+var PROF_SESSION_KEY = "jmrp_profesor_ok"; // una sola clave desbloquea todo
+                                     // el Panel del profesor (Torneos,
+                                     // Evaluaciones, Diario y Evidencias).
 var TORNEOS = { ENDPOINT:"https://script.google.com/macros/s/AKfycbwZom2Ehtdj-cP9QTfQn8SoZOQ92LWjnF8XbQWksqBXEYty-aDDJtOg2AQOpIl9ry9s/exec" };
 var EXAMENES = { ENDPOINT:"" }; // opcional: URL "…/exec" de un Web App de Apps Script
                                  // para que las evaluaciones cargadas se vean en todos
@@ -1586,7 +1586,6 @@ var EXAMS_BASE = [{"id": "g6-p1", "grado": "6.°", "grupos": ["6-1", "6-2"], "pe
    grado + periodo con una evaluación ya existente, la reemplazan; si no,
    se agregan como una evaluación nueva (por ejemplo, para Periodo 2 o 3).  */
 var EV_KEY="jmrp_evaluaciones_v1";
-var EV_SESSION_KEY="jmrp_eval_ok";
 var evParseado=null; // último resultado de evParsear(), pendiente de guardar
 
 function evNormalizarGrado(raw){
@@ -1796,13 +1795,7 @@ function evActualizarExams(){
   if(typeof initSelect==="function" && $("#selGrado")) initSelect();
 }
 
-function evDesbloqueado(){ try{ return sessionStorage.getItem(EV_SESSION_KEY)==="1"; }catch(e){ return false; } }
-function evIntentarEntrar(){
-  var v=$("#evClave").value||"";
-  if(v===ORGANIZADOR_CLAVE){ try{ sessionStorage.setItem(EV_SESSION_KEY,"1"); }catch(e){} renderCargar(); }
-  else { $("#evClaveErr").textContent="Clave incorrecta."; }
-}
-function evSalir(){ try{ sessionStorage.removeItem(EV_SESSION_KEY); }catch(e){} renderCargar(); }
+var evMontaje="#profContenido"; // dónde se dibuja el formulario (dentro del Panel del profesor)
 
 var EV_PLANTILLA = "TÍTULO: Evaluación tipo Saber — Reglas del voleibol (Grado 8.°)\n"+
 "ÁREA: Educación Física, Recreación y Deportes\n"+
@@ -1823,21 +1816,10 @@ var EV_PLANTILLA = "TÍTULO: Evaluación tipo Saber — Reglas del voleibol (Gra
 "una misma lectura. 'Competencia:' también es opcional. La clave admite\n"+
 "'1. B', '1) B', '1-B' o el formato compacto '1B 2D 3A'.)";
 
-function renderCargar(){
-  var b=$("#body_cargar"); if(!b) return;
-  if(!evDesbloqueado()){
-    b.innerHTML='<div class="tz-lock"><div class="ico">'+ICONOS.evaluaciones+'</div>'+
-      '<h3 style="font-family:var(--serif);font-size:19px;margin-bottom:6px">Acceso del profesor</h3>'+
-      '<p class="psub" style="margin-bottom:16px">Escribe la clave para cargar una evaluación nueva.</p>'+
-      '<div class="field"><input id="evClave" type="text" placeholder="Clave de acceso" autocomplete="off" '+
-        'onkeydown="if(event.key===\'Enter\')evIntentarEntrar()"></div>'+
-      '<div class="err" id="evClaveErr"></div>'+
-      '<button class="btn btn-primary" style="width:100%" onclick="evIntentarEntrar()">Entrar</button></div>';
-    return;
-  }
-  var h='<div style="display:flex;justify-content:flex-end;margin-bottom:10px">'+
-    '<button class="btn-logout" onclick="evSalir()">Salir</button></div>'+
-    '<div class="card pcard">'+
+function renderCargar(contenedor){
+  if(contenedor) evMontaje=contenedor;
+  var b=$(evMontaje); if(!b) return;
+  var h='<div class="card pcard">'+
     '<div class="eyebrow">Nueva evaluación</div>'+
     '<h2 class="ptitle" style="font-size:20px;margin-bottom:6px">Cargar una evaluación tipo Saber</h2>'+
     '<p class="psub">Pega el texto de la evaluación (o sube un archivo) siguiendo el formato de la plantilla. '+
@@ -1931,8 +1913,8 @@ function evEliminar(id){
 /* ====== STATE ====== */
 var sel={grado:null,grupo:null,periodo:null}, exam=null, seq=[], idx=0, answers=[], student={nombre:"",documento:""};
 var secondsLeft=0, timerId=null, startedAt=null, submitted=false;
-var SCREENS=["inicio","home","select","identify","instructions","exam","results","recursos","herramientas","retos","evidencias","torneos","diario","cargar"];
-var RUTAS={inicio:"inicio",evaluaciones:"home",recursos:"recursos",herramientas:"herramientas",retos:"retos",evidencias:"evidencias",torneos:"torneos",diario:"diario"};
+var SCREENS=["inicio","home","select","identify","instructions","exam","results","recursos","herramientas","retos","evidencias","torneos","diario","profesor"];
+var RUTAS={inicio:"inicio",evaluaciones:"home",recursos:"recursos",herramientas:"herramientas",retos:"retos",evidencias:"evidencias",torneos:"torneos",diario:"diario",profesor:"profesor"};
 var $=function(s){return document.querySelector(s)};
 function el(t,c){var e=document.createElement(t);if(c)e.className=c;return e}
 function go(name){SCREENS.forEach(function(s){$("#s_"+s).classList.toggle("hidden",s!==name)});window.scrollTo(0,0)}
@@ -2158,6 +2140,7 @@ function route(){
   if(h==="evidencias") renderEvidencias();
   if(h==="torneos")  { renderTorneos(); tzSincronizar(); }
   if(h==="diario")   renderDiario();
+  if(h==="profesor") renderProfesor();
   if(h==="inicio")   renderMenu();
   go(RUTAS[h]);
 }
@@ -2464,10 +2447,8 @@ function comprimirFoto(file,cb){
    ORGANIZADOR_CLAVE). Si más adelante defines TORNEOS.ENDPOINT, cada
    cambio también se intenta enviar a esa hoja de cálculo.                */
 var TZ_KEY="jmrp_torneos_v1";
-var TZ_SESSION_KEY="jmrp_organizador_ok";
 var tzCache=null;                // copia en memoria (evita releer localStorage todo el tiempo)
-var tzClaveOK="";                // clave con la que el organizador entró (se envía al guardar)
-var tzVista="publico";           // "publico" | "organizador"
+var tzClaveOK="";                // clave con la que el profesor entró (se envía al guardar)
 var tzFiltroDeporte="Todos";     // filtro de la vista pública
 var tzPlanillaAbierta=null;      // id del partido con la planilla desplegada
 var tzEditando=null;             // id del torneo en edición (agregar equipos)
@@ -2499,7 +2480,7 @@ function tzSincronizar(){
       if(json&&json.ok&&Array.isArray(json.data)){
         tzCache=json.data;
         try{ localStorage.setItem(TZ_KEY,JSON.stringify(json.data)); }catch(e){}
-        if($("#tzTabPublico")) renderTorneos();
+        if($("#body_torneos")) renderTorneos();
       }
     })
     .catch(function(){ /* sin internet: seguimos con la copia local guardada */ });
@@ -2606,7 +2587,7 @@ function tzPlanillaHTML(t,p,rExistente){
      '</div>';
   return h;
 }
-function tzTogglePlanilla(pid){ tzPlanillaAbierta=pid; renderTorneos(); }
+function tzTogglePlanilla(pid){ tzPlanillaAbierta=pid; profRenderTorneos(); }
 
 function tzGuardarResultado(tid,pid){
   var lista=tzCargar(), t=tzBuscar(lista,tid); if(!t) return;
@@ -2640,24 +2621,14 @@ function tzGuardarResultado(tid,pid){
   if(t.estado==="Programado") t.estado="En curso";
   tzGuardar(lista);
   tzPlanillaAbierta=null;
-  renderTorneos();
+  profRenderTorneos();
 }
 
-/* ---- navegación entre pestañas Torneos / Organizador ---- */
-function torneosIrA(v){
-  tzVista=v; tzPlanillaAbierta=null;
-  $("#tzTabPublico").classList.toggle("on",v==="publico");
-  $("#tzTabOrg").classList.toggle("on",v==="organizador");
-  renderTorneos();
-}
 function torneosSetFiltro(d){ tzFiltroDeporte=d; renderTorneos(); }
 
 function renderTorneos(){
-  if(!$("#tzTabPublico")) return; /* la sección aún no está en el DOM */
-  $("#tzTabPublico").classList.toggle("on",tzVista==="publico");
-  $("#tzTabOrg").classList.toggle("on",tzVista==="organizador");
-  if(tzVista==="organizador") tzRenderOrganizador();
-  else tzRenderPublico();
+  if(!$("#body_torneos")) return; /* la sección aún no está en el DOM */
+  tzRenderPublico();
 }
 
 /* ---- vista pública (solo lectura) ---- */
@@ -2724,36 +2695,11 @@ function tzTarjetaTorneo(t,esOrganizador){
   return h;
 }
 
-/* ---- panel del organizador (protegido con clave) ---- */
-function tzDesbloqueado(){ try{ return sessionStorage.getItem(TZ_SESSION_KEY)==="1"; }catch(e){ return false; } }
-function tzIntentarEntrar(){
-  var v=$("#tzClave").value||"";
-  if(v===ORGANIZADOR_CLAVE){
-    tzClaveOK=v;
-    try{ sessionStorage.setItem(TZ_SESSION_KEY,"1"); }catch(e){}
-    renderTorneos();
-  } else {
-    $("#tzClaveErr").textContent="Clave incorrecta.";
-  }
-}
-function tzSalir(){ try{ sessionStorage.removeItem(TZ_SESSION_KEY); }catch(e){} renderTorneos(); }
-
-function tzRenderOrganizador(){
-  var b=$("#body_torneos");
-  if(!tzDesbloqueado()){
-    b.innerHTML='<div class="tz-lock"><div class="ico">'+ICONOS.torneos+'</div>'+
-      '<h3 style="font-family:var(--serif);font-size:19px;margin-bottom:6px">Acceso del organizador</h3>'+
-      '<p class="psub" style="margin-bottom:16px">Escribe la clave para crear y administrar los torneos.</p>'+
-      '<div class="field"><input id="tzClave" type="text" placeholder="Clave de acceso" autocomplete="off" '+
-        'onkeydown="if(event.key===\'Enter\')tzIntentarEntrar()"></div>'+
-      '<div class="err" id="tzClaveErr"></div>'+
-      '<button class="btn btn-primary" style="width:100%" onclick="tzIntentarEntrar()">Entrar</button></div>';
-    return;
-  }
+/* ---- panel del organizador: se dibuja dentro del Panel del profesor ---- */
+function profRenderTorneos(){
+  var b=$("#profContenido"); if(!b) return;
   var lista=tzCargar();
-  var h='<div style="display:flex;justify-content:flex-end;margin-bottom:10px">'+
-    '<button class="btn-logout" onclick="tzSalir()">Salir del organizador</button></div>'+
-    '<div class="card pcard tz-select-card"><div class="eyebrow">Nuevo torneo</div>'+
+  var h='<div class="card pcard tz-select-card"><div class="eyebrow">Nuevo torneo</div>'+
     '<h2 class="ptitle" style="font-size:20px;margin-bottom:12px">Crear torneo interclases</h2>'+
     '<div class="field"><label for="tzNombre">Nombre del torneo</label>'+
     '<input id="tzNombre" type="text" placeholder="Ej. Copa Interclases de Voleibol — Periodo 2"></div>'+
@@ -2798,22 +2744,95 @@ function tzCrearTorneo(){
     equipos:equipos, fixture:tzGenerarFixture(equipos), resultados:{}, estado:"Programado",
     creado:new Date().toISOString() };
   var lista=tzCargar(); lista.push(t); tzGuardar(lista);
-  renderTorneos();
+  profRenderTorneos();
 }
 function tzRegenerarFixture(tid){
   if(!confirm("Esto borra los resultados registrados y crea un fixture nuevo. ¿Continuar?")) return;
   var lista=tzCargar(), t=tzBuscar(lista,tid); if(!t) return;
   t.fixture=tzGenerarFixture(t.equipos); t.resultados={}; t.estado="Programado";
-  tzGuardar(lista); renderTorneos();
+  tzGuardar(lista); profRenderTorneos();
 }
 function tzCambiarEstado(tid,estado){
   var lista=tzCargar(), t=tzBuscar(lista,tid); if(!t) return;
-  t.estado=estado; tzGuardar(lista); renderTorneos();
+  t.estado=estado; tzGuardar(lista); profRenderTorneos();
 }
 function tzEliminarTorneo(tid){
   if(!confirm("¿Eliminar este torneo y todos sus resultados? Esta acción no se puede deshacer.")) return;
   var lista=tzCargar().filter(function(t){ return t.id!==tid; });
-  tzGuardar(lista); renderTorneos();
+  tzGuardar(lista); profRenderTorneos();
+}
+
+/* ====== PANEL DEL PROFESOR (unificado) ======
+   Un solo punto de entrada, con una sola clave, para las cuatro tareas
+   administrativas de la página: Torneos, Evaluaciones, Diario y Evidencias.
+   Antes cada una tenía su propia pantalla y su propia clave por separado;
+   ahora comparten el mismo candado (profDesbloqueado más abajo) y viven
+   como pestañas dentro de esta única pantalla.                            */
+var profTab="torneos"; // "torneos" | "evaluaciones" | "diario" | "evidencias"
+
+function profDesbloqueado(){ try{ return sessionStorage.getItem(PROF_SESSION_KEY)==="1"; }catch(e){ return false; } }
+
+function irAProfesor(tab){
+  if(tab) profTab=tab;
+  go("profesor");
+  renderProfesor();
+}
+
+function profIntentarEntrar(){
+  var v=$("#profClave").value||"";
+  if(v===ORGANIZADOR_CLAVE){
+    tzClaveOK=v;
+    try{ sessionStorage.setItem(PROF_SESSION_KEY,"1"); }catch(e){}
+    renderProfesor();
+  } else {
+    $("#profClaveErr").textContent="Clave incorrecta.";
+  }
+}
+function profSalirTodo(){ try{ sessionStorage.removeItem(PROF_SESSION_KEY); }catch(e){} tzClaveOK=""; renderProfesor(); }
+
+function renderProfesor(){
+  var b=$("#body_profesor"); if(!b) return;
+  if(!profDesbloqueado()){
+    b.innerHTML='<div class="tz-lock"><div class="ico">'+ICONOS.evaluaciones+'</div>'+
+      '<h3 style="font-family:var(--serif);font-size:19px;margin-bottom:6px">Acceso del profesor</h3>'+
+      '<p class="psub" style="margin-bottom:16px">Una sola clave para administrar torneos, evaluaciones, diario y evidencias.</p>'+
+      '<div class="field"><input id="profClave" type="text" placeholder="Clave de acceso" autocomplete="off" '+
+        'onkeydown="if(event.key===\'Enter\')profIntentarEntrar()"></div>'+
+      '<div class="err" id="profClaveErr"></div>'+
+      '<button class="btn btn-primary" style="width:100%" onclick="profIntentarEntrar()">Entrar</button></div>';
+    return;
+  }
+  var tabs=[["torneos","Torneos"],["evaluaciones","Evaluaciones"],["diario","Diario"],["evidencias","Evidencias"]];
+  var h='<div style="display:flex;justify-content:flex-end;margin-bottom:6px">'+
+    '<button class="btn-logout" onclick="profSalirTodo()">Salir del panel</button></div>'+
+    '<div class="tz-toolbar">'+tabs.map(function(t){
+      return '<button class="'+(profTab===t[0]?"on":"")+'" onclick="irAProfesor(\''+t[0]+'\')">'+t[1]+'</button>';
+    }).join("")+'</div>'+
+    '<div id="profContenido"></div>';
+  b.innerHTML=h;
+  if(profTab==="torneos") profRenderTorneos();
+  else if(profTab==="evaluaciones") renderCargar("#profContenido");
+  else if(profTab==="diario") profRenderDiario();
+  else if(profTab==="evidencias") profRenderEvidencias();
+}
+
+function profRenderDiario(){
+  var b=$("#profContenido"); if(!b) return;
+  b.innerHTML='<div class="card pcard"><div class="eyebrow">Diario de actividad física</div>'+
+    '<h2 class="ptitle" style="font-size:20px;margin-bottom:10px">Registros de los estudiantes</h2>'+
+    (DIARIO.ENDPOINT
+      ? '<p class="psub">Cada registro que guarda un estudiante se envía a tu hoja de cálculo conectada. Ábrela directamente para revisar los minutos de actividad por estudiante y por semana.</p>'
+      : '<p class="psub">Todavía no conectaste una hoja de cálculo para el Diario (<code>DIARIO.ENDPOINT</code> está vacío en el código). Mientras tanto, cada estudiante guarda sus minutos solo en su propio navegador y no puedes verlos desde aquí. Si quieres centralizarlos como ya funciona con Torneos, dime y preparamos el mismo tipo de backend (un Code.gs y una hoja de cálculo).</p>')+
+    '</div>';
+}
+function profRenderEvidencias(){
+  var b=$("#profContenido"); if(!b) return;
+  b.innerHTML='<div class="card pcard"><div class="eyebrow">Evidencias</div>'+
+    '<h2 class="ptitle" style="font-size:20px;margin-bottom:10px">Fotos y videos de los retos</h2>'+
+    (EVIDENCIAS.ENDPOINT
+      ? '<p class="psub">Las evidencias que suben los estudiantes llegan a tu hoja o carpeta conectada. Revísalas directamente ahí.</p>'
+      : '<p class="psub">Todavía no conectaste un destino para las evidencias (<code>EVIDENCIAS.ENDPOINT</code> está vacío en el código), así que por ahora esa sección se muestra "en construcción" para los estudiantes. Avísame si quieres que preparemos ese backend también.</p>')+
+    '</div>';
 }
 
 /* ====== DIARIO DE ACTIVIDAD FÍSICA ====== */
