@@ -275,6 +275,16 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
 .tz-toolbar button.on{background:var(--green);border-color:var(--green);color:#fff}
 .tz-jornada{font-family:var(--serif);font-weight:700;font-size:13.5px;color:var(--gold-d);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 8px}
 .tz-detalle{font-size:12.5px;color:var(--muted);margin-top:6px}
+.rank-list{display:flex;flex-direction:column;gap:8px;margin:14px 0 4px}
+.rank-row{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.rank-row.top1{background:linear-gradient(90deg,rgba(198,154,59,.16),#fff);border-color:var(--gold)}
+.rank-row.top2{background:linear-gradient(90deg,rgba(150,150,150,.16),#fff)}
+.rank-row.top3{background:linear-gradient(90deg,rgba(176,120,60,.16),#fff)}
+.rank-pos{font-family:var(--serif);font-weight:800;font-size:14px;color:var(--muted);width:26px;text-align:center;flex:none}
+.rank-medal{font-size:19px;width:26px;text-align:center;flex:none}
+.rank-name{flex:1;font-weight:700;font-size:13.5px;color:var(--ink)}
+.rank-nota{font-family:var(--serif);font-weight:800;color:var(--green-d);font-size:14.5px;white-space:nowrap}
+.rank-title{font-family:var(--serif);font-weight:700;font-size:13.5px;color:var(--gold-d);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 8px}
 .tz-empty-org{background:var(--white);border:1.5px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted);font-size:13.5px}
 .ev-textarea{width:100%;min-height:240px;font-family:var(--sans);font-size:14.5px;line-height:1.55;padding:14px;border:1.5px solid var(--line);border-radius:10px;resize:vertical}
 .ev-plantilla{background:var(--parch);border:1px dashed var(--line);border-radius:12px;padding:14px 16px;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace;margin:10px 0 18px;max-height:260px;overflow:auto}
@@ -2055,7 +2065,7 @@ function grade(a,total){ var p=total?a/total:0, nota, nivel;
   else if(p<0.68){nota=3.0+((p-0.52)/0.16)*0.9;nivel="Nivel Básico";}
   else if(p<0.84){nota=4.0+((p-0.68)/0.16)*0.5;nivel="Nivel Alto";}
   else{nota=4.6+((p-0.84)/0.16)*0.4;nivel="Nivel Superior";}
-  return {nota:Math.round(nota*10)/10, nivel:nivel, puntaje100:Math.round(p*100)};
+  return {nota:Math.round(nota*10)/10, notaExacta:Math.round(nota*100000)/100000, nivel:nivel, puntaje100:Math.round(p*100)};
 }
 var lastResult=null, ansByN={};
 function finalize(auto){
@@ -2071,7 +2081,7 @@ function finalize(auto){
   var g=grade(correct,total);
   lastResult={ timestamp:new Date().toISOString(), grado:exam.grado, grupo:sel.grupo, periodo:exam.periodo,
     examId:exam.id, nombre:student.nombre, documento:student.documento,
-    aciertos:correct, total:total, puntaje100:g.puntaje100, nota:g.nota, nivel:g.nivel, tiempoSeg:used,
+    aciertos:correct, total:total, puntaje100:g.puntaje100, nota:g.nota, notaExacta:g.notaExacta, nivel:g.nivel, tiempoSeg:used,
     porCompetencia:Object.keys(comp).reduce(function(o,k){o[k]=comp[k].ok+"/"+comp[k].tot;return o},{}), respuestas:respuestas };
   showResults(g,correct,total,used,comp,auto); sendResult(lastResult);
 }
@@ -2450,6 +2460,32 @@ function resBloqueHTML(titulo,subVacio,agg){
     '</div>';
 }
 
+/* Insignias: ranking individual por nombre, con nota a 5 decimales para
+   definir el puesto sin empates falsos. Empates reales comparten puesto
+   (ranking tipo "1,2,2,4…"). */
+var MEDALLA=["🥇","🥈","🥉"];
+function resInsigniasHTML(titulo,rows){
+  var conNombre=rows.filter(function(r){ return r.nombre; });
+  if(!conNombre.length) return "";
+  var ordenado=conNombre.slice().sort(function(a,b){
+    return (b.notaExacta!=null?b.notaExacta:b.nota)-(a.notaExacta!=null?a.notaExacta:a.nota);
+  });
+  var puesto=0, anterior=null;
+  var filas=ordenado.map(function(r,i){
+    var val=r.notaExacta!=null?r.notaExacta:r.nota;
+    if(val!==anterior){ puesto=i+1; anterior=val; }
+    var top=puesto<=3?" top"+puesto:"";
+    return '<div class="rank-row'+top+'">'+
+      '<span class="rank-pos">'+(puesto<=3?"":puesto+"°")+'</span>'+
+      (puesto<=3?'<span class="rank-medal">'+MEDALLA[puesto-1]+'</span>':'')+
+      '<span class="rank-name">'+esc(r.nombre)+'</span>'+
+      '<span class="rank-nota">'+val.toFixed(5)+'</span>'+
+    '</div>';
+  }).join("");
+  return '<div class="rank-title">'+esc(titulo)+'</div><div class="rank-list">'+filas+'</div>';
+}
+
+
 function resDibujar(){
   var b=$("#body_resultados"), h=borrador("resultados");
   if(RES_DATA===null){
@@ -2476,12 +2512,17 @@ function resDibujar(){
   function pintarBloques(){
     var g=RES_SEL.grado, gr=RES_SEL.grupo, out="";
     if(g&&gr){
-      out+=resBloqueHTML("Tu grupo · "+g+" "+gr,null,resAgregar(data.filter(function(r){return r.grado===g&&r.grupo===gr;})));
+      var filaGrupo=data.filter(function(r){return r.grado===g&&r.grupo===gr;});
+      out+=resBloqueHTML("Tu grupo · "+g+" "+gr,null,resAgregar(filaGrupo));
+      out+=resInsigniasHTML("Puestos · "+g+" "+gr,filaGrupo);
     }
     if(g){
-      out+=resBloqueHTML("Todo el grado "+g,null,resAgregar(data.filter(function(r){return r.grado===g;})));
+      var filaGrado=data.filter(function(r){return r.grado===g;});
+      out+=resBloqueHTML("Todo el grado "+g,null,resAgregar(filaGrado));
+      out+=resInsigniasHTML("Puestos · Grado "+g,filaGrado);
     }
     out+=resBloqueHTML("Consolidado general","Todavía no hay evaluaciones presentadas.",resAgregar(data));
+    out+=resInsigniasHTML("Puestos · Consolidado general",data);
     $("#resBloques").innerHTML=out;
   }
   $("#resGrado").onchange=function(){ RES_SEL.grado=$("#resGrado").value; RES_SEL.grupo=""; llenarGrupos(); pintarBloques(); };
