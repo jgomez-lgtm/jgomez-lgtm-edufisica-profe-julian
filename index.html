@@ -286,6 +286,16 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
 .rank-nota{font-family:var(--serif);font-weight:800;color:var(--green-d);font-size:14.5px;white-space:nowrap}
 .rank-title{font-family:var(--serif);font-weight:700;font-size:13.5px;color:var(--gold-d);letter-spacing:.04em;text-transform:uppercase;margin:16px 0 8px}
 .tz-empty-org{background:var(--white);border:1.5px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted);font-size:13.5px}
+.game-wrap{position:relative;margin:6px 0 4px}
+.game-hud{display:flex;justify-content:space-between;font-family:var(--serif);font-weight:700;font-size:14px;color:var(--green-d);margin-bottom:8px}
+.game-hud b{color:var(--gold-d);font-size:16px}
+.game-canvas{width:100%;height:auto;display:block;border-radius:16px;border:1px solid var(--line);background:linear-gradient(180deg,#EAF3EC 0%, var(--parch) 62%, #DCEBD8 62%, #DCEBD8 100%);box-shadow:var(--shadow);touch-action:manipulation}
+.game-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(32,40,31,.55);border-radius:16px;padding:14px}
+.game-card{background:var(--white);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:22px 26px;max-width:320px;text-align:center}
+.game-emoji{font-size:38px;margin-bottom:6px}
+.game-card h2{font-family:var(--serif);font-size:19px;margin-bottom:8px;color:var(--ink)}
+.game-card p{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.game-record-form{margin-top:16px;text-align:left}
 .ev-textarea{width:100%;min-height:240px;font-family:var(--sans);font-size:14.5px;line-height:1.55;padding:14px;border:1.5px solid var(--line);border-radius:10px;resize:vertical}
 .ev-plantilla{background:var(--parch);border:1px dashed var(--line);border-radius:12px;padding:14px 16px;font-size:12px;line-height:1.6;color:var(--muted);white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace;margin:10px 0 18px;max-height:260px;overflow:auto}
 .ev-errbox{background:rgba(178,58,58,.08);border:1px solid rgba(178,58,58,.3);border-radius:10px;padding:12px 14px;margin:12px 0;font-size:13px;color:#8a2e2e}
@@ -538,6 +548,51 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
   <div class="foot">Institución Educativa <b>Jesús María Rojas Pagola</b> · Santa Bárbara, Antioquia · <b>Ciencia y Progreso</b></div>
 </section>
 
+<!-- ===== JUEGO ===== -->
+<section id="s_juego" class="hidden">
+  <div class="topbar"><div class="topbar-in">
+    <img data-crest alt="">
+    <div class="bn">Jesús María Rojas Pagola<small>Ciencia y Progreso</small></div>
+    <div class="spacer"></div>
+    <button class="btn-home" onclick="irA('inicio')">Inicio</button>
+  </div></div>
+  <div class="page">
+    <div class="eyebrow">Educación Física</div>
+    <h1 class="ptitle">Corre y salta</h1>
+    <p class="psub">Salta los conos, esquiva los balones. Cada vez es más rápido — pon a prueba tu concentración.</p>
+
+    <div class="game-wrap">
+      <div class="game-hud">
+        <span class="game-score">Puntaje: <b id="jgScore">0</b></span>
+        <span class="game-best">Mejor de hoy: <b id="jgBest">0</b></span>
+      </div>
+      <canvas id="jgCanvas" class="game-canvas" width="720" height="220"></canvas>
+      <div class="game-overlay" id="jgOverlay">
+        <div class="game-card">
+          <div class="game-emoji">🏃</div>
+          <h2 id="jgOverlayTitulo">Corre y salta</h2>
+          <p id="jgOverlayTexto">Presiona <b>espacio</b> o toca la pantalla para saltar los conos y los balones. Un choque termina el intento.</p>
+          <button class="btn btn-primary" id="jgBtnJugar" onclick="jgIniciar()">Jugar</button>
+          <div id="jgFormRecord" class="game-record-form hidden">
+            <div class="field"><label for="jgNombre">Tu nombre</label>
+              <input id="jgNombre" type="text" placeholder="Nombre y apellido" maxlength="60"></div>
+            <div class="field"><label for="jgGrado">Grado</label>
+              <select id="jgGrado"><option value="">Selecciona…</option>
+                <option>6.°</option><option>7.°</option><option>8.°</option>
+                <option>9.°</option><option>10.°</option><option>11.°</option></select></div>
+            <div class="err" id="jgErr"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="jgGuardarRecord()">Guardar récord</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="eyebrow" style="margin-top:26px">Tabla de récords</div>
+    <div id="body_juego"></div>
+  </div>
+  <div class="foot">Institución Educativa <b>Jesús María Rojas Pagola</b> · Santa Bárbara, Antioquia · <b>Ciencia y Progreso</b></div>
+</section>
+
 <!-- ===== RESULTADOS ===== -->
 <section id="s_resultados" class="hidden">
   <div class="topbar"><div class="topbar-in">
@@ -643,15 +698,19 @@ var SECCIONES = {
     desc:"Tu ruta de retos por grado y por periodo.",
     promesa:"un reto de acondicionamiento cada semana —fuerza, flexibilidad y resistencia— con sus pasos, para hacer en casa o en clase." },
 
-  resultados: { orden:5, visible:true, titulo:"Resultados",
+  juego: { orden:5, visible:true, titulo:"Juego",
+    desc:"Salta conos y balones. ¿Cuál es tu récord?",
+    promesa:"un juego rápido de concentración: salta los obstáculos, no te distraigas y deja tu nombre en la tabla de récords." },
+
+  resultados: { orden:6, visible:true, titulo:"Resultados",
     desc:"Desempeño por competencia: grupo, grado y consolidado general.",
     promesa:"el tablero de resultados de las evaluaciones: el desempeño por competencia de tu grupo, de tu grado y el consolidado de todos los que ya presentaron." },
 
-  torneos: { orden:6, visible:true, titulo:"Torneos",
+  torneos: { orden:7, visible:true, titulo:"Torneos",
     desc:"Crea y consulta torneos interclases: fixture, resultados y posiciones.",
     promesa:"los torneos interclases de voleibol, microfútbol y baloncesto, con su fixture, resultados y tabla de posiciones." },
 
-  diario: { orden:7, visible:true, titulo:"Diario",
+  diario: { orden:8, visible:true, titulo:"Diario",
     desc:"Registra tus minutos de actividad física.",
     promesa:"tu diario de movimiento: los minutos de actividad física de cada día y cuánto llevas en la semana." }
 };
@@ -1927,8 +1986,8 @@ function evEliminar(id){
 /* ====== STATE ====== */
 var sel={grado:null,grupo:null,periodo:null}, exam=null, seq=[], idx=0, answers=[], student={nombre:"",documento:""};
 var secondsLeft=0, timerId=null, startedAt=null, submitted=false;
-var SCREENS=["inicio","home","select","identify","instructions","exam","results","recursos","herramientas","retos","resultados","torneos","diario","profesor"];
-var RUTAS={inicio:"inicio",evaluaciones:"home",recursos:"recursos",herramientas:"herramientas",retos:"retos",resultados:"resultados",torneos:"torneos",diario:"diario",profesor:"profesor"};
+var SCREENS=["inicio","home","select","identify","instructions","exam","results","recursos","herramientas","retos","juego","resultados","torneos","diario","profesor"];
+var RUTAS={inicio:"inicio",evaluaciones:"home",recursos:"recursos",herramientas:"herramientas",retos:"retos",juego:"juego",resultados:"resultados",torneos:"torneos",diario:"diario",profesor:"profesor"};
 var $=function(s){return document.querySelector(s)};
 function el(t,c){var e=document.createElement(t);if(c)e.className=c;return e}
 function go(name){SCREENS.forEach(function(s){$("#s_"+s).classList.toggle("hidden",s!==name)});window.scrollTo(0,0)}
@@ -2151,6 +2210,7 @@ function route(){
   if(h==="recursos") renderRecursos();
   if(h==="herramientas") renderHerramientas();
   if(h==="retos")    renderRetos();
+  if(h==="juego")    { renderJuego(); jgSincronizar(); } else { jgDetener(); }
   if(h==="resultados") renderResultados();
   if(h==="torneos")  { renderTorneos(); tzSincronizar(); }
   if(h==="diario")   renderDiario();
@@ -2167,6 +2227,7 @@ var ICONOS={
  recursos:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><path d="M3 5h7a2 2 0 012 2v13a2 2 0 00-2-2H3z"/><path d="M21 5h-7a2 2 0 00-2 2v13a2 2 0 012-2h7z"/></svg>',
  herramientas:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><path d="M14.7 6.3a4 4 0 01-5.4 5.4L4 17l1 1 5.3-5.3a4 4 0 015.4-5.4l-2.3 2.3 1 1z"/><circle cx="18.5" cy="5.5" r="1.5"/></svg>',
  retos:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><circle cx="12" cy="13" r="7"/><path d="M12 13V9"/><path d="M9.5 2h5"/></svg>',
+ juego:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><circle cx="6" cy="6" r="3"/><path d="M6 9v5l4 3M6 14l-3 6M13 21l3-8 4 2 2-6"/></svg>',
  resultados:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><path d="M4 19V10"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M20 19H4"/></svg>',
  torneos:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><path d="M7 4h10v5a5 5 0 01-10 0z"/><path d="M7 6H4v1a3 3 0 003 3M17 6h3v1a3 3 0 01-3 3"/><path d="M10 20h4M12 14v6"/></svg>',
  diario:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M7 15h3l1.5-2 2 4L15 15h2"/></svg>',
@@ -2549,6 +2610,175 @@ function comprimirFoto(file,cb){
   };
   fr.readAsDataURL(file);
 }
+
+/* ====== JUEGO: "Corre y salta" ======
+   Clon sencillo del juego del dinosaurio de Chrome, con conos y balones
+   como obstáculos. El puntaje sube mientras el estudiante no choque; la
+   velocidad aumenta poco a poco para exigir concentración. Los récords se
+   guardan en una hoja de cálculo (ver JUEGO.ENDPOINT) para que la tabla
+   sea la misma para todo el colegio, desde cualquier dispositivo.        */
+var JUEGO = { ENDPOINT:"https://script.google.com/macros/s/AKfycbwZom2Ehtdj-cP9QTfQn8SoZOQ92LWjnF8XbQWksqBXEYty-aDDJtOg2AQOpIl9ry9s/exec" };  // Mismo backend combinado de Torneos + Juego (ver Code_Torneos_y_Juego.gs)
+var JG_KEY="jmrp_juego_mejor_hoy";
+var jg = null; // estado del juego en curso (null = no hay partida activa)
+
+function jgSincronizar(){
+  var b=$("#body_juego");
+  if(!JUEGO.ENDPOINT){ if(b) b.innerHTML=construccion("juego"); return; }
+  fetch(JUEGO.ENDPOINT+(JUEGO.ENDPOINT.indexOf("?")>=0?"&":"?")+"accion=juego")
+    .then(function(r){ return r.json(); })
+    .then(function(json){
+      if(json&&json.ok&&Array.isArray(json.data)){ jgPintarTabla(json.data); }
+      else if(b){ b.innerHTML='<p class="tz-detalle">No se pudo cargar la tabla de récords.</p>'; }
+    })
+    .catch(function(){ if(b) b.innerHTML='<p class="tz-detalle">No se pudo conectar con la tabla de récords.</p>'; });
+}
+function jgPintarTabla(data){
+  var b=$("#body_juego"); if(!b) return;
+  if(!data.length){ b.innerHTML=construccion("juego"); return; }
+  var top=data.slice().sort(function(a,c){return c.puntaje-a.puntaje;}).slice(0,20);
+  b.innerHTML=resInsigniasHTML("Mejores puntajes",top.map(function(r){
+    return { nombre:r.nombre+(r.grado?" ("+r.grado+")":""), nota:r.puntaje, notaExacta:r.puntaje };
+  })).replace(/rank-nota">([\d.]+)/g,function(m,v){ return 'rank-nota">'+Math.round(parseFloat(v)); });
+}
+
+function renderJuego(){
+  if(!$("#jgCanvas")) return;
+  jgResetPantalla();
+  var best=0; try{ best=parseInt(localStorage.getItem(JG_KEY)||"0",10)||0; }catch(e){}
+  $("#jgBest").textContent=best;
+}
+function jgResetPantalla(){
+  $("#jgOverlay").classList.remove("hidden");
+  $("#jgOverlayTitulo").textContent="Corre y salta";
+  $("#jgOverlayTexto").textContent="Presiona espacio o toca la pantalla para saltar los conos y los balones. Un choque termina el intento.";
+  $("#jgBtnJugar").classList.remove("hidden");
+  $("#jgFormRecord").classList.add("hidden");
+  $("#jgScore").textContent="0";
+}
+
+function jgDetener(){
+  if(jg&&jg.raf){ cancelAnimationFrame(jg.raf); }
+  jg=null;
+}
+
+function jgIniciar(){
+  var cv=$("#jgCanvas"); if(!cv) return;
+  var ctx=cv.getContext("2d");
+  var W=cv.width, H=cv.height, suelo=H-34;
+  $("#jgOverlay").classList.add("hidden");
+  jg={
+    ctx:ctx, W:W, H:H, suelo:suelo,
+    jugador:{x:60,y:suelo-40,w:26,h:40,vy:0,saltando:false},
+    obstaculos:[], velocidad:5.2, distNext:70, frame:0, score:0, vivo:true, raf:null
+  };
+  jgLoop();
+}
+
+function jgSalto(){
+  if(!jg||!jg.vivo) return;
+  var j=jg.jugador;
+  if(!j.saltando){ j.vy=-11.5; j.saltando=true; }
+}
+
+function jgLoop(){
+  if(!jg) return;
+  var g=jg, ctx=g.ctx;
+  g.frame++;
+  g.velocidad=5.2+Math.min(5.5,g.frame/620);
+
+  var j=g.jugador;
+  j.vy+=0.62; j.y+=j.vy;
+  if(j.y>g.suelo-j.h){ j.y=g.suelo-j.h; j.vy=0; j.saltando=false; }
+
+  g.distNext-=g.velocidad;
+  if(g.distNext<=0){
+    var tipo=Math.random()<0.5?"cono":"balon";
+    var h=tipo==="cono"?32:26;
+    g.obstaculos.push({x:g.W+10,w:tipo==="cono"?22:h,h:h,tipo:tipo});
+    var base=150+Math.random()*140-Math.min(70,g.frame/16);
+    var piso=50*g.velocidad; // siempre deja tiempo para completar un salto (~37 frames) antes del siguiente obstáculo
+    g.distNext=Math.max(piso, base);
+  }
+  g.obstaculos.forEach(function(o){ o.x-=g.velocidad; });
+  g.obstaculos=g.obstaculos.filter(function(o){ return o.x+o.w>-5; });
+
+  g.obstaculos.forEach(function(o){
+    var oy=g.suelo-o.h;
+    if(j.x<o.x+o.w-6 && j.x+j.w-6>o.x && j.y<oy+o.h && j.y+j.h>oy){ g.vivo=false; }
+  });
+
+  g.score=Math.floor(g.frame/6);
+  $("#jgScore").textContent=g.score;
+
+  jgDibujar();
+
+  if(g.vivo){ g.raf=requestAnimationFrame(jgLoop); }
+  else { jgFin(); }
+}
+
+function jgDibujar(){
+  var g=jg, ctx=g.ctx;
+  ctx.clearRect(0,0,g.W,g.H);
+  // pista (línea discontinua)
+  ctx.strokeStyle="rgba(32,40,31,.18)"; ctx.lineWidth=2; ctx.setLineDash([14,12]);
+  ctx.beginPath(); ctx.moveTo(0,g.suelo+6); ctx.lineTo(g.W,g.suelo+6); ctx.stroke(); ctx.setLineDash([]);
+  // jugador
+  var j=g.jugador;
+  ctx.fillStyle="#2E6B3A";
+  ctx.beginPath(); ctx.arc(j.x+j.w/2, j.y+8, 8, 0, Math.PI*2); ctx.fill();
+  ctx.fillRect(j.x+6, j.y+14, j.w-12, j.h-20);
+  ctx.strokeStyle="#2E6B3A"; ctx.lineWidth=4; ctx.lineCap="round";
+  var paso=j.saltando?6:Math.sin(g.frame/2)*8;
+  ctx.beginPath(); ctx.moveTo(j.x+8,j.y+j.h-6); ctx.lineTo(j.x+8-paso,j.y+j.h+6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(j.x+j.w-8,j.y+j.h-6); ctx.lineTo(j.x+j.w-8+paso,j.y+j.h+6); ctx.stroke();
+  // obstáculos
+  g.obstaculos.forEach(function(o){
+    var oy=g.suelo-o.h;
+    if(o.tipo==="cono"){
+      ctx.fillStyle="#C69A3B";
+      ctx.beginPath(); ctx.moveTo(o.x+o.w/2,oy); ctx.lineTo(o.x,oy+o.h); ctx.lineTo(o.x+o.w,oy+o.h); ctx.closePath(); ctx.fill();
+      ctx.fillStyle="#fff"; ctx.fillRect(o.x+4,oy+o.h*0.6,o.w-8,3);
+    } else {
+      ctx.fillStyle="#3E86AE";
+      ctx.beginPath(); ctx.arc(o.x+o.w/2,oy+o.h/2,o.h/2,0,Math.PI*2); ctx.fill();
+    }
+  });
+}
+
+function jgFin(){
+  var best=0; try{ best=parseInt(localStorage.getItem(JG_KEY)||"0",10)||0; }catch(e){}
+  if(jg.score>best){ best=jg.score; try{ localStorage.setItem(JG_KEY,String(best)); }catch(e){} }
+  $("#jgBest").textContent=best;
+  $("#jgOverlay").classList.remove("hidden");
+  $("#jgOverlayTitulo").textContent="¡Chocaste!";
+  $("#jgOverlayTexto").textContent="Puntaje: "+jg.score+". Escribe tu nombre para dejarlo en la tabla de récords, o vuelve a intentarlo.";
+  $("#jgBtnJugar").textContent="Intentar de nuevo";
+  $("#jgBtnJugar").classList.remove("hidden");
+  if(JUEGO.ENDPOINT){ $("#jgFormRecord").classList.remove("hidden"); }
+}
+
+function jgGuardarRecord(){
+  if(!jg) return;
+  var nombre=($("#jgNombre").value||"").trim(), grado=$("#jgGrado").value;
+  if(!nombre){ $("#jgErr").textContent="Escribe tu nombre para guardar el récord."; return; }
+  $("#jgErr").textContent="";
+  var payload={ tipo:"record", nombre:nombre, grado:grado, puntaje:jg.score, timestamp:new Date().toISOString() };
+  if(JUEGO.ENDPOINT){
+    try{ fetch(JUEGO.ENDPOINT,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(payload)}); }catch(e){}
+  }
+  $("#jgFormRecord").classList.add("hidden");
+  $("#jgOverlayTexto").textContent="¡Récord guardado! Puntaje: "+jg.score+".";
+  setTimeout(jgSincronizar,900);
+}
+
+document.addEventListener("keydown",function(e){
+  if(e.code==="Space"&&jg&&jg.vivo){ e.preventDefault(); jgSalto(); }
+});
+(function(){
+  var cv=document.getElementById("jgCanvas");
+  if(cv) cv.addEventListener("pointerdown",function(){ if(jg&&jg.vivo) jgSalto(); });
+})();
 
 /* ====== TORNEOS — "Interclases Tiempo Libre" ======
    Módulo dinámico: el profesor crea los torneos, los equipos, genera el
