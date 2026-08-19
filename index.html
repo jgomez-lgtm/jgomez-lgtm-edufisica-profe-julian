@@ -558,37 +558,75 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
   </div></div>
   <div class="page">
     <div class="eyebrow">Educación Física</div>
-    <h1 class="ptitle">Corre y salta</h1>
-    <p class="psub">Salta los conos, esquiva los balones. Cada vez es más rápido — pon a prueba tu concentración.</p>
+    <h1 class="ptitle">Juegos</h1>
+    <p class="psub">Dos juegos rápidos de concentración y reflejos. ¿Cuál es tu récord?</p>
 
-    <div class="game-wrap">
-      <div class="game-hud">
-        <span class="game-score">Puntaje: <b id="jgScore">0</b></span>
-        <span class="game-best">Mejor de hoy: <b id="jgBest">0</b></span>
-      </div>
-      <canvas id="jgCanvas" class="game-canvas" width="720" height="220"></canvas>
-      <div class="game-overlay" id="jgOverlay">
-        <div class="game-card">
-          <div class="game-emoji">🏃</div>
-          <h2 id="jgOverlayTitulo">Corre y salta</h2>
-          <p id="jgOverlayTexto">Presiona <b>espacio</b> o toca la pantalla para saltar los conos y los balones. Un choque termina el intento.</p>
-          <button class="btn btn-primary" id="jgBtnJugar" onclick="jgIniciar()">Jugar</button>
-          <div id="jgFormRecord" class="game-record-form hidden">
-            <div class="field"><label for="jgNombre">Tu nombre</label>
-              <input id="jgNombre" type="text" placeholder="Nombre y apellido" maxlength="60"></div>
-            <div class="field"><label for="jgGrado">Grado</label>
-              <select id="jgGrado"><option value="">Selecciona…</option>
-                <option>6.°</option><option>7.°</option><option>8.°</option>
-                <option>9.°</option><option>10.°</option><option>11.°</option></select></div>
-            <div class="err" id="jgErr"></div>
-            <button class="btn btn-primary" style="width:100%" onclick="jgGuardarRecord()">Guardar récord</button>
+    <div class="tabs" id="juegoTabs">
+      <button class="tab" id="tabJuego1" onclick="jSeleccionar('correr')">Corre y salta<small>Salta conos y balones</small></button>
+      <button class="tab" id="tabJuego2" onclick="jSeleccionar('atrapa')">Atrapa y esquiva<small>Reflejos y puntería</small></button>
+    </div>
+
+    <div id="juego1Wrap">
+      <div class="game-wrap">
+        <div class="game-hud">
+          <span class="game-score">Puntaje: <b id="jgScore">0</b></span>
+          <span class="game-best">Mejor de hoy: <b id="jgBest">0</b></span>
+        </div>
+        <canvas id="jgCanvas" class="game-canvas" width="720" height="220"></canvas>
+        <div class="game-overlay" id="jgOverlay">
+          <div class="game-card">
+            <div class="game-emoji">🏃</div>
+            <h2 id="jgOverlayTitulo">Corre y salta</h2>
+            <p id="jgOverlayTexto">Presiona <b>espacio</b> o toca la pantalla para saltar los conos y los balones. Un choque termina el intento.</p>
+            <button class="btn btn-primary" id="jgBtnJugar" onclick="jgIniciar()">Jugar</button>
+            <div id="jgFormRecord" class="game-record-form hidden">
+              <div class="field"><label for="jgNombre">Tu nombre</label>
+                <input id="jgNombre" type="text" placeholder="Nombre y apellido" maxlength="60"></div>
+              <div class="field"><label for="jgGrado">Grado</label>
+                <select id="jgGrado"><option value="">Selecciona…</option>
+                  <option>6.°</option><option>7.°</option><option>8.°</option>
+                  <option>9.°</option><option>10.°</option><option>11.°</option></select></div>
+              <div class="err" id="jgErr"></div>
+              <button class="btn btn-primary" style="width:100%" onclick="jgGuardarRecord()">Guardar récord</button>
+            </div>
           </div>
         </div>
       </div>
+      <div class="eyebrow" style="margin-top:26px">Tabla de récords · Corre y salta</div>
+      <div id="body_juego"></div>
     </div>
 
-    <div class="eyebrow" style="margin-top:26px">Tabla de récords</div>
-    <div id="body_juego"></div>
+    <div id="juego2Wrap" class="hidden">
+      <div class="game-wrap">
+        <div class="game-hud">
+          <span class="game-score">Puntaje: <b id="eaScore">0</b></span>
+          <span class="game-lives" id="eaVidas">❤️❤️❤️</span>
+          <span class="game-best">Mejor de hoy: <b id="eaBest">0</b></span>
+        </div>
+        <canvas id="eaCanvas" class="game-canvas" width="720" height="220"></canvas>
+        <div class="game-overlay" id="eaOverlay">
+          <div class="game-card">
+            <div class="game-emoji">🧤</div>
+            <h2 id="eaOverlayTitulo">Atrapa y esquiva</h2>
+            <p id="eaOverlayTexto">Mueve la canasta con las flechas ← → (o arrastra el dedo) para atrapar los balones buenos y esquivar los malos. Tres fallos y se acaba.</p>
+            <button class="btn btn-primary" id="eaBtnJugar" onclick="eaIniciar()">Jugar</button>
+            <div id="eaFormRecord" class="game-record-form hidden">
+              <div class="field"><label for="eaNombre">Tu nombre</label>
+                <input id="eaNombre" type="text" placeholder="Nombre y apellido" maxlength="60"></div>
+              <div class="field"><label for="eaGrado">Grado</label>
+                <select id="eaGrado"><option value="">Selecciona…</option>
+                  <option>6.°</option><option>7.°</option><option>8.°</option>
+                  <option>9.°</option><option>10.°</option><option>11.°</option></select></div>
+              <div class="err" id="eaErr"></div>
+              <button class="btn btn-primary" style="width:100%" onclick="eaGuardarRecord()">Guardar récord</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="eyebrow" style="margin-top:26px">Tabla de récords · Atrapa y esquiva</div>
+      <div id="body_juego2"></div>
+    </div>
+
   </div>
   <div class="foot">Institución Educativa <b>Jesús María Rojas Pagola</b> · Santa Bárbara, Antioquia · <b>Ciencia y Progreso</b></div>
 </section>
@@ -2210,7 +2248,14 @@ function route(){
   if(h==="recursos") renderRecursos();
   if(h==="herramientas") renderHerramientas();
   if(h==="retos")    renderRetos();
-  if(h==="juego")    { renderJuego(); jgSincronizar(); } else { jgDetener(); }
+  if(h==="juego"){
+    $("#tabJuego1").classList.toggle("on",J_ACTIVO==="correr");
+    $("#tabJuego2").classList.toggle("on",J_ACTIVO==="atrapa");
+    $("#juego1Wrap").classList.toggle("hidden",J_ACTIVO!=="correr");
+    $("#juego2Wrap").classList.toggle("hidden",J_ACTIVO!=="atrapa");
+    if(J_ACTIVO==="correr"){ renderJuego(); jgSincronizar(); }
+    else { renderAtrapa(); eaSincronizar(); }
+  } else { jgDetener(); eaDetener(); }
   if(h==="resultados") renderResultados();
   if(h==="torneos")  { renderTorneos(); tzSincronizar(); }
   if(h==="diario")   renderDiario();
@@ -2617,7 +2662,7 @@ function comprimirFoto(file,cb){
    velocidad aumenta poco a poco para exigir concentración. Los récords se
    guardan en una hoja de cálculo (ver JUEGO.ENDPOINT) para que la tabla
    sea la misma para todo el colegio, desde cualquier dispositivo.        */
-var JUEGO = { ENDPOINT:"https://script.google.com/macros/s/AKfycbwZom2Ehtdj-cP9QTfQn8SoZOQ92LWjnF8XbQWksqBXEYty-aDDJtOg2AQOpIl9ry9s/exec" };  // Mismo backend combinado de Torneos + Juego (ver Code_Torneos_y_Juego.gs)
+var JUEGO = { ENDPOINT:"https://script.google.com/macros/s/AKfycbwZom2Ehtdj-cP9QTfQn8SoZOQ92LWjnF8XbQWksqBXEYty-aDDJtOg2AQOpIl9ry9s/exec" };  // Mismo backend combinado (ver Code_Torneos_y_Juegos.gs)
 var JG_KEY="jmrp_juego_mejor_hoy";
 var jg = null; // estado del juego en curso (null = no hay partida activa)
 
@@ -2762,7 +2807,7 @@ function jgGuardarRecord(){
   var nombre=($("#jgNombre").value||"").trim(), grado=$("#jgGrado").value;
   if(!nombre){ $("#jgErr").textContent="Escribe tu nombre para guardar el récord."; return; }
   $("#jgErr").textContent="";
-  var payload={ tipo:"record", nombre:nombre, grado:grado, puntaje:jg.score, timestamp:new Date().toISOString() };
+  var payload={ tipo:"record", juego:"correr", nombre:nombre, grado:grado, puntaje:jg.score, timestamp:new Date().toISOString() };
   if(JUEGO.ENDPOINT){
     try{ fetch(JUEGO.ENDPOINT,{method:"POST",mode:"no-cors",
       headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(payload)}); }catch(e){}
@@ -2778,6 +2823,190 @@ document.addEventListener("keydown",function(e){
 (function(){
   var cv=document.getElementById("jgCanvas");
   if(cv) cv.addEventListener("pointerdown",function(){ if(jg&&jg.vivo) jgSalto(); });
+})();
+
+/* ====== SELECTOR DE JUEGOS ====== */
+var J_ACTIVO="correr";
+function jSeleccionar(cual){
+  if(cual===J_ACTIVO) return;
+  jgDetener(); eaDetener();
+  J_ACTIVO=cual;
+  $("#tabJuego1").classList.toggle("on",cual==="correr");
+  $("#tabJuego2").classList.toggle("on",cual==="atrapa");
+  $("#juego1Wrap").classList.toggle("hidden",cual!=="correr");
+  $("#juego2Wrap").classList.toggle("hidden",cual!=="atrapa");
+  if(cual==="correr"){ renderJuego(); jgSincronizar(); }
+  else { renderAtrapa(); eaSincronizar(); }
+}
+
+/* ====== JUEGO 2: "Atrapa y esquiva" ======
+   Segundo juego de la misma sección: una cesta se mueve de lado a lado
+   para atrapar balones buenos (suman puntos) y esquivar los malos
+   (restan una vida). Tres vidas, cada vez cae más rápido. Récords en su
+   propia tabla (ver JUEGO2.ENDPOINT / Code_JuegoAtrapa.gs).             */
+var JUEGO2 = { ENDPOINT:"https://script.google.com/macros/s/AKfycbwZom2Ehtdj-cP9QTfQn8SoZOQ92LWjnF8XbQWksqBXEYty-aDDJtOg2AQOpIl9ry9s/exec" };  // Mismo backend combinado (ver Code_Torneos_y_Juegos.gs)
+var EA_KEY="jmrp_atrapa_mejor_hoy";
+var ea=null;
+
+function eaSincronizar(){
+  var b=$("#body_juego2");
+  if(!JUEGO2.ENDPOINT){ if(b) b.innerHTML=construccion("juego"); return; }
+  fetch(JUEGO2.ENDPOINT+(JUEGO2.ENDPOINT.indexOf("?")>=0?"&":"?")+"accion=atrapa")
+    .then(function(r){ return r.json(); })
+    .then(function(json){
+      if(json&&json.ok&&Array.isArray(json.data)){ eaPintarTabla(json.data); }
+      else if(b){ b.innerHTML='<p class="tz-detalle">No se pudo cargar la tabla de récords.</p>'; }
+    })
+    .catch(function(){ if(b) b.innerHTML='<p class="tz-detalle">No se pudo conectar con la tabla de récords.</p>'; });
+}
+function eaPintarTabla(data){
+  var b=$("#body_juego2"); if(!b) return;
+  if(!data.length){ b.innerHTML=construccion("juego"); return; }
+  var top=data.slice().sort(function(a,c){return c.puntaje-a.puntaje;}).slice(0,20);
+  b.innerHTML=resInsigniasHTML("Mejores puntajes",top.map(function(r){
+    return { nombre:r.nombre+(r.grado?" ("+r.grado+")":""), nota:r.puntaje, notaExacta:r.puntaje };
+  })).replace(/rank-nota">([\d.]+)/g,function(m,v){ return 'rank-nota">'+Math.round(parseFloat(v)); });
+}
+
+function renderAtrapa(){
+  if(!$("#eaCanvas")) return;
+  eaResetPantalla();
+  var best=0; try{ best=parseInt(localStorage.getItem(EA_KEY)||"0",10)||0; }catch(e){}
+  $("#eaBest").textContent=best;
+}
+function eaResetPantalla(){
+  $("#eaOverlay").classList.remove("hidden");
+  $("#eaOverlayTitulo").textContent="Atrapa y esquiva";
+  $("#eaOverlayTexto").textContent="Mueve la canasta con las flechas ← → (o arrastra el dedo) para atrapar los balones buenos y esquivar los malos. Tres fallos y se acaba.";
+  $("#eaBtnJugar").classList.remove("hidden");
+  $("#eaFormRecord").classList.add("hidden");
+  $("#eaScore").textContent="0";
+  $("#eaVidas").textContent="❤️❤️❤️";
+}
+function eaDetener(){ if(ea&&ea.raf){ cancelAnimationFrame(ea.raf); } ea=null; }
+
+function eaIniciar(){
+  var cv=$("#eaCanvas"); if(!cv) return;
+  var ctx=cv.getContext("2d");
+  var W=cv.width, H=cv.height;
+  $("#eaOverlay").classList.add("hidden");
+  ea={
+    ctx:ctx, W:W, H:H,
+    cesta:{x:W/2-35,w:70,h:16}, izq:false, der:false,
+    objetos:[], velocidad:2.6, distNext:40, frame:0, score:0, vidas:3, vivo:true, raf:null
+  };
+  eaLoop();
+}
+function eaMover(dx){ if(!ea||!ea.vivo) return; ea.cesta.x=Math.max(0,Math.min(ea.W-ea.cesta.w,ea.cesta.x+dx)); }
+
+function eaLoop(){
+  if(!ea) return;
+  var g=ea, ctx=g.ctx;
+  g.frame++;
+  g.velocidad=2.6+Math.min(2.0,g.frame/900);
+
+  if(g.izq) eaMover(-9);
+  if(g.der) eaMover(9);
+
+  g.distNext-=g.velocidad;
+  if(g.distNext<=0){
+    var hayMaloEnPantalla=g.objetos.some(function(o){ return o.malo; });
+    var malo=!hayMaloEnPantalla&&Math.random()<Math.min(0.5,0.22+g.frame/1800);
+    g.objetos.push({x:20+Math.random()*(g.W-40),y:-14,r:13,malo:malo,vy:g.velocidad});
+    g.distNext=34+Math.random()*40;
+  }
+  g.objetos.forEach(function(o){ o.y+=o.vy; });
+
+  var cy=g.H-24, cesta=g.cesta;
+  g.objetos=g.objetos.filter(function(o){
+    if(o.y+o.r>=cy && o.y-o.r<=cy+16 && o.x>cesta.x-4 && o.x<cesta.x+cesta.w+4){
+      if(o.malo){ g.vidas--; $("#eaVidas").textContent="❤️".repeat(Math.max(0,g.vidas))+"🤍".repeat(3-Math.max(0,g.vidas)); if(g.vidas<=0) g.vivo=false; }
+      else { g.score++; }
+      return false;
+    }
+    return o.y-o.r<g.H+20;
+  });
+
+  $("#eaScore").textContent=g.score;
+  eaDibujar();
+
+  if(g.vivo){ g.raf=requestAnimationFrame(eaLoop); }
+  else { eaFin(); }
+}
+
+function eaDibujar(){
+  var g=ea, ctx=g.ctx;
+  ctx.clearRect(0,0,g.W,g.H);
+  // cesta
+  var c=g.cesta;
+  ctx.fillStyle="#2E6B3A";
+  ctx.beginPath();
+  ctx.moveTo(c.x,g.H-24);
+  ctx.lineTo(c.x+c.w,g.H-24);
+  ctx.lineTo(c.x+c.w-8,g.H-24+c.h);
+  ctx.lineTo(c.x+8,g.H-24+c.h);
+  ctx.closePath(); ctx.fill();
+  // objetos
+  g.objetos.forEach(function(o){
+    ctx.fillStyle=o.malo?"#B23A3A":"#3E86AE";
+    ctx.beginPath(); ctx.arc(o.x,o.y,o.r,0,Math.PI*2); ctx.fill();
+    if(o.malo){
+      ctx.strokeStyle="#fff"; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(o.x-5,o.y-5); ctx.lineTo(o.x+5,o.y+5);
+      ctx.moveTo(o.x+5,o.y-5); ctx.lineTo(o.x-5,o.y+5); ctx.stroke();
+    }
+  });
+}
+
+function eaFin(){
+  var best=0; try{ best=parseInt(localStorage.getItem(EA_KEY)||"0",10)||0; }catch(e){}
+  if(ea.score>best){ best=ea.score; try{ localStorage.setItem(EA_KEY,String(best)); }catch(e){} }
+  $("#eaBest").textContent=best;
+  $("#eaOverlay").classList.remove("hidden");
+  $("#eaOverlayTitulo").textContent="¡Se acabaron las vidas!";
+  $("#eaOverlayTexto").textContent="Puntaje: "+ea.score+". Escribe tu nombre para dejarlo en la tabla de récords, o vuelve a intentarlo.";
+  $("#eaBtnJugar").textContent="Intentar de nuevo";
+  $("#eaBtnJugar").classList.remove("hidden");
+  if(JUEGO2.ENDPOINT){ $("#eaFormRecord").classList.remove("hidden"); }
+}
+
+function eaGuardarRecord(){
+  if(!ea) return;
+  var nombre=($("#eaNombre").value||"").trim(), grado=$("#eaGrado").value;
+  if(!nombre){ $("#eaErr").textContent="Escribe tu nombre para guardar el récord."; return; }
+  $("#eaErr").textContent="";
+  var payload={ tipo:"record", juego:"atrapa", nombre:nombre, grado:grado, puntaje:ea.score, timestamp:new Date().toISOString() };
+  if(JUEGO2.ENDPOINT){
+    try{ fetch(JUEGO2.ENDPOINT,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(payload)}); }catch(e){}
+  }
+  $("#eaFormRecord").classList.add("hidden");
+  $("#eaOverlayTexto").textContent="¡Récord guardado! Puntaje: "+ea.score+".";
+  setTimeout(eaSincronizar,900);
+}
+
+document.addEventListener("keydown",function(e){
+  if(!ea||!ea.vivo) return;
+  if(e.code==="ArrowLeft"){ e.preventDefault(); ea.izq=true; }
+  if(e.code==="ArrowRight"){ e.preventDefault(); ea.der=true; }
+});
+document.addEventListener("keyup",function(e){
+  if(!ea) return;
+  if(e.code==="ArrowLeft") ea.izq=false;
+  if(e.code==="ArrowRight") ea.der=false;
+});
+(function(){
+  var cv=document.getElementById("eaCanvas");
+  if(!cv) return;
+  var arrastrando=false;
+  function posX(evt){
+    var rect=cv.getBoundingClientRect();
+    var clientX=evt.clientX!=null?evt.clientX:(evt.touches&&evt.touches[0]?evt.touches[0].clientX:0);
+    return (clientX-rect.left)*(cv.width/rect.width);
+  }
+  cv.addEventListener("pointerdown",function(e){ arrastrando=true; if(ea&&ea.vivo) ea.cesta.x=Math.max(0,Math.min(ea.W-ea.cesta.w,posX(e)-ea.cesta.w/2)); });
+  cv.addEventListener("pointermove",function(e){ if(arrastrando&&ea&&ea.vivo) ea.cesta.x=Math.max(0,Math.min(ea.W-ea.cesta.w,posX(e)-ea.cesta.w/2)); });
+  window.addEventListener("pointerup",function(){ arrastrando=false; });
 })();
 
 /* ====== TORNEOS — "Interclases Tiempo Libre" ======
