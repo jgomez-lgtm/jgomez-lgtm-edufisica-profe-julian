@@ -47,7 +47,37 @@ input:focus,select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0
 .pcard{padding:28px 30px}
 h1.big{font-family:var(--serif);font-weight:800;font-size:27px;margin-bottom:4px}
 .sub{color:var(--muted);font-size:15px;margin-bottom:18px}
+.hero-band{position:relative;padding-top:6px}
+.hero-band::before{content:"";position:absolute;inset:-36px -20px auto -20px;height:200px;
+  background:radial-gradient(2px 2px at 18% 30%, rgba(198,154,59,.35) 1px, transparent 0),
+             radial-gradient(2px 2px at 58% 12%, rgba(46,107,58,.25) 1px, transparent 0),
+             radial-gradient(2px 2px at 80% 42%, rgba(198,154,59,.3) 1px, transparent 0),
+             radial-gradient(2px 2px at 34% 55%, rgba(46,107,58,.2) 1px, transparent 0),
+             radial-gradient(2px 2px at 92% 8%, rgba(198,154,59,.25) 1px, transparent 0);
+  background-size:150px 150px; pointer-events:none; z-index:0}
+.brand{position:relative;z-index:1}
+.brand .tagline{margin-top:10px;font-size:13.5px;color:var(--muted);max-width:430px;margin-left:auto;margin-right:auto;line-height:1.55}
+.hero-divider{width:46px;height:3px;background:var(--gold);border-radius:2px;margin:14px auto}
+.foot-inst{max-width:780px;width:100%;margin:26px auto 0;padding-top:22px;border-top:1px solid var(--line)}
+.foot-links{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px 4px;margin-bottom:16px}
+.foot-links button{background:none;border:none;color:var(--green-d);font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;cursor:pointer;font-family:var(--sans)}
+.foot-links button:hover{background:var(--parch-2)}
+.foot-links .sep{color:var(--line);font-size:12px}
+.foot-inst-row{text-align:center;color:var(--muted);font-size:12px;line-height:1.7}
+.foot-inst-row b{color:var(--green-d)}
+.foot-legal{max-width:520px;margin:10px auto 0;text-align:center;color:var(--muted);font-size:11px;line-height:1.5;opacity:.85}
 .aviso{background:var(--parch);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:10px;padding:13px 15px;font-size:12.5px;color:var(--muted);margin-top:6px}
+.ae-crit{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.ae-crit h3{font-family:var(--serif);font-size:16px;color:var(--green-d);margin-bottom:3px}
+.ae-crit .ae-desc{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.ae-comp{margin-bottom:14px}
+.ae-comp:last-child{margin-bottom:0}
+.ae-comp-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.ae-comp-txt{font-size:13px;color:var(--ink);font-weight:600;line-height:1.4}
+.ae-comp-val{font-family:var(--serif);font-weight:800;color:var(--gold-d);font-size:15px;white-space:nowrap}
+.ae-comp input[type=range]{width:100%;accent-color:var(--green)}
+.ae-avg{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-family:var(--serif);font-weight:700;color:var(--green-d);font-size:14px}
+.ae-avg b{font-size:17px;color:var(--gold-d)}
 .evwrap{margin-top:4px}
 .evform{background:var(--parch);border:1px dashed var(--line);border-radius:12px;padding:14px;margin-top:10px}
 .evok{margin-top:10px}
@@ -336,10 +366,14 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
 <!-- ===== INICIO: menú del portal ===== -->
 <section id="s_inicio" class="stage">
   <div class="panel panel-wide">
-    <div class="brand">
-      <img class="crest" data-crest alt="Escudo I.E. Jesús María Rojas Pagola">
-      <div class="nm">Institución Educativa Jesús María Rojas Pagola</div>
-      <div class="mt">Ciencia y Progreso</div>
+    <div class="hero-band">
+      <div class="brand">
+        <img class="crest" data-crest alt="Escudo I.E. Jesús María Rojas Pagola">
+        <div class="nm">Institución Educativa Jesús María Rojas Pagola</div>
+        <div class="mt">Ciencia y Progreso</div>
+        <div class="hero-divider"></div>
+        <p class="tagline">Portal oficial del área de Educación Física, Recreación y Deporte — evaluaciones, torneos, retos y recursos en un solo lugar.</p>
+      </div>
     </div>
     <div class="card pcard">
       <div class="eyebrow">Educación Física, Recreación y Deportes</div>
@@ -347,6 +381,14 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
       <p class="sub">Elige el espacio al que quieres entrar.</p>
       <div class="menu" id="menuInicio"></div>
       <div class="soon hidden" id="proximamente"></div>
+    </div>
+    <div class="foot-inst">
+      <div class="foot-links" id="footLinks"></div>
+      <div class="foot-inst-row">
+        Institución Educativa <b>Jesús María Rojas Pagola</b> · Santa Bárbara, Antioquia<br>
+        Área de Educación Física, Recreación y Deporte · <b>Ciencia y Progreso</b>
+      </div>
+      <div class="foot-legal">Los datos académicos registrados en este portal (evaluaciones, evidencias y resultados) se tratan exclusivamente con fines institucionales, conforme a la Ley 1581 de 2012 de protección de datos personales.</div>
     </div>
   </div>
 </section>
@@ -363,12 +405,31 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
       <div class="eyebrow">Portal de evaluaciones</div>
       <h1 class="big">Evaluaciones tipo Saber</h1>
       <p class="sub">Selecciona tu grado, grupo y periodo para presentar la evaluación que te corresponde.</p>
-      <button class="btn btn-primary" style="width:100%" onclick="go('select')">Presentar una evaluación</button>
+      <button class="btn btn-primary" style="width:100%" onclick="irAEvaluacionFormal()">Presentar una evaluación</button>
+      <button class="btn-ghost" style="width:100%;margin-top:10px" onclick="irAQuiz()">Presentar un quiz</button>
+      <button class="btn-ghost" style="width:100%;margin-top:10px" onclick="irA('autoeval')">Hacer mi autoevaluación</button>
       <div class="aviso"><b>Tratamiento de datos.</b> Al presentar la evaluación se registran tu nombre y número de documento con fines exclusivamente académicos e institucionales, conforme a la Ley 1581 de 2012 (habeas data). El acceso a las respuestas es restringido a la institución.</div>
       <button class="btn-ghost" style="width:100%;margin-top:16px" onclick="irA('inicio')">← Volver al portal</button>
       <button class="btn-ghost" style="width:100%;margin-top:10px;font-size:12.5px" onclick="irAProfesor('evaluaciones')">¿Eres el profesor? Cargar una evaluación</button>
     </div>
   </div>
+</section>
+
+<!-- ===== AUTOEVALUACIÓN ===== -->
+<section id="s_autoeval" class="hidden">
+  <div class="topbar"><div class="topbar-in">
+    <img data-crest alt="">
+    <div class="bn">Jesús María Rojas Pagola<small>Ciencia y Progreso</small></div>
+    <div class="spacer"></div>
+    <button class="btn-home" onclick="irA('evaluaciones')">Volver</button>
+  </div></div>
+  <div class="page">
+    <div class="eyebrow">Educación Física</div>
+    <h1 class="ptitle">Autoevaluación</h1>
+    <p class="psub">Califícate con honestidad en cada componente, de 3.0 a 5.0. Al final verás tu resultado promediado.</p>
+    <div id="body_autoeval"></div>
+  </div>
+  <div class="foot">Institución Educativa <b>Jesús María Rojas Pagola</b> · Santa Bárbara, Antioquia · <b>Ciencia y Progreso</b></div>
 </section>
 
 <!-- SELECT -->
@@ -377,7 +438,7 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
     <div class="brand"><img class="crest" data-crest alt=""><div class="mt">Ciencia y Progreso</div></div>
     <div class="card pcard">
       <div class="eyebrow">Paso 1 de 3</div>
-      <h1 class="big">Encuentra tu evaluación</h1>
+      <h1 class="big" id="selTitulo">Encuentra tu evaluación</h1>
       <p class="sub">Elige tu grado, grupo y periodo.</p>
       <div class="field"><label for="selGrado">Grado</label><select id="selGrado"></select></div>
       <div class="row2">
@@ -386,7 +447,7 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
       </div>
       <div id="examPreview"></div>
       <div style="display:flex;gap:12px;margin-top:6px">
-        <button class="btn-ghost" onclick="go('home')">Volver</button>
+        <button class="btn-ghost" onclick="QUIZ_MODE=false;go('home')">Volver</button>
         <button class="btn btn-primary" style="flex:1" id="toIdentify" disabled onclick="go('identify')">Continuar</button>
       </div>
     </div>
@@ -1720,12 +1781,14 @@ function evParsear(textoOriginal){
   var errores=[];
   var texto=(textoOriginal||"").replace(/\r\n/g,"\n").replace(/\r/g,"\n");
 
-  var meta={ titulo:"", area:"Educación Física, Recreación y Deportes", tiempo:30, puntos:1, grado:"", grupos:[], periodo:"" };
+  var meta={ titulo:"", area:"Educación Física, Recreación y Deportes", tiempo:30, puntos:1, grado:"", grupos:[], periodo:"", modalidad:"Evaluación final" };
   function campo(re){ var m=texto.match(re); return m?m[1].trim():""; }
   meta.titulo = campo(/^T[IÍ]TULO\s*:\s*(.+)$/im);
   var areaCap = campo(/^[ÁA]REA\s*:\s*(.+)$/im); if(areaCap) meta.area=areaCap;
   var tiempoCap = campo(/^TIEMPO[^:\n]*:\s*(\d+)/im); if(tiempoCap) meta.tiempo=parseInt(tiempoCap,10);
   var puntosCap = campo(/^PUNTOS[^:\n]*:\s*(\d+)/im); if(puntosCap) meta.puntos=parseInt(puntosCap,10);
+  var modalidadCap = campo(/^MODALIDAD\s*:\s*(.+)$/im);
+  if(modalidadCap && /quiz/i.test(modalidadCap)) meta.modalidad="Quiz";
   meta.grado = evNormalizarGrado(campo(/^GRADO\s*:\s*(.+)$/im));
   meta.periodo = evNormalizarPeriodo(campo(/^PERIODO\s*:\s*(.+)$/im));
   var gruposCap = campo(/^GRUPOS?\s*:\s*(.+)$/im);
@@ -1900,7 +1963,8 @@ function evGuardarLista(lista){
 function evActualizarExams(){
   var cargadas=evCargarGuardadas();
   var base=EXAMS_BASE.filter(function(b){
-    return !cargadas.some(function(c){ return c.grado===b.grado && c.periodo===b.periodo; });
+    var bMod=b.modalidad||"Evaluación final";
+    return !cargadas.some(function(c){ return c.grado===b.grado && c.periodo===b.periodo && (c.modalidad||"Evaluación final")===bMod; });
   });
   EXAMS = base.concat(cargadas);
   if(typeof initSelect==="function" && $("#selGrado")) initSelect();
@@ -1913,7 +1977,8 @@ var EV_PLANTILLA = "TÍTULO: Evaluación tipo Saber — Reglas del voleibol (Gra
 "TIEMPO: 30\n"+
 "GRADO: 8°\n"+
 "GRUPOS: 8-1, 8-2\n"+
-"PERIODO: Periodo 2\n\n"+
+"PERIODO: Periodo 2\n"+
+"MODALIDAD: Evaluación final\n\n"+
 "TEXTO 1: Origen del voleibol\n"+
 "El voleibol fue inventado en 1895 por William G. Morgan en Holyoke,\n"+
 "Massachusetts, como una alternativa menos física que el baloncesto.\n\n"+
@@ -1925,7 +1990,9 @@ var EV_PLANTILLA = "TÍTULO: Evaluación tipo Saber — Reglas del voleibol (Gra
 "CLAVE DE RESPUESTAS:\n1. B\n2. B\n\n"+
 "(La sección 'TEXTO N' es opcional: solo úsala si varias preguntas comparten\n"+
 "una misma lectura. 'Competencia:' también es opcional. La clave admite\n"+
-"'1. B', '1) B', '1-B' o el formato compacto '1B 2D 3A'.)";
+"'1. B', '1) B', '1-B' o el formato compacto '1B 2D 3A'. 'MODALIDAD:' también\n"+
+"es opcional — escribe 'MODALIDAD: Quiz' si es un quiz corto del periodo y no\n"+
+"la evaluación final; si no la escribes, se guarda como evaluación final.)";
 
 function renderCargar(contenedor){
   if(contenedor) evMontaje=contenedor;
@@ -1953,7 +2020,7 @@ function renderCargar(contenedor){
   } else {
     cargadas.forEach(function(ex){
       h+='<div class="ev-list-item"><div><b>'+esc(ex.titulo)+'</b><div class="tz-detalle">'+esc(ex.grado)+' · '+esc(ex.periodo)+
-        ' · '+ex.preguntas.length+' preguntas · Grupos: '+esc(ex.grupos.join(", "))+'</div></div>'+
+        ' · '+esc(ex.modalidad||"Evaluación final")+' · '+ex.preguntas.length+' preguntas · Grupos: '+esc(ex.grupos.join(", "))+'</div></div>'+
         '<button class="btn-sm btn-sm-bad" onclick="evEliminar(\''+ex.id+'\')">Eliminar</button></div>';
     });
   }
@@ -1980,7 +2047,7 @@ function evPrevisualizar(){
       r.errores.map(function(e){return '<li>'+esc(e)+'</li>';}).join("")+'</ul></div>';
   } else {
     h+='<div class="ev-okbox">Todo en orden: <b>'+r.preguntas.length+' preguntas</b> · '+r.textos.length+' texto(s) de lectura · '+
-      esc(r.meta.grado)+' · '+esc(r.meta.periodo)+' · Grupos: '+esc(r.meta.grupos.join(", "))+'</div>'+
+      esc(r.meta.grado)+' · '+esc(r.meta.periodo)+' · '+esc(r.meta.modalidad)+' · Grupos: '+esc(r.meta.grupos.join(", "))+'</div>'+
       '<div style="display:flex;gap:10px;margin:10px 0 16px">'+
       '<button class="btn btn-primary" style="flex:1" onclick="evGuardarEvaluacion()">Guardar esta evaluación</button></div>';
   }
@@ -2000,12 +2067,13 @@ function evGuardarEvaluacion(){
   var examen={
     id: "custom_"+r.meta.grado.replace(/[^0-9A-Za-z]/g,"")+"_"+r.meta.periodo.replace(/[^0-9A-Za-z]/g,"")+"_"+Date.now(),
     grado:r.meta.grado, grupos:r.meta.grupos, periodo:r.meta.periodo, titulo:r.meta.titulo, area:r.meta.area,
+    modalidad:r.meta.modalidad||"Evaluación final",
     timeLimitMin:r.meta.tiempo||30, puntosPorPregunta:r.meta.puntos||1,
     textos:r.textos.map(function(t){ return { id:t.id, titulo:t.titulo, instruccion:"", cuerpo:t.cuerpo }; }),
     preguntas:r.preguntas.map(function(q){ return { n:q.n, seccion:q.seccion, competencia:q.competencia, enunciado:q.enunciado, opciones:q.opciones, clave:q.clave }; })
   };
   var lista=evCargarGuardadas();
-  lista=lista.filter(function(e){ return !(e.grado===examen.grado && e.periodo===examen.periodo); });
+  lista=lista.filter(function(e){ return !(e.grado===examen.grado && e.periodo===examen.periodo && (e.modalidad||"Evaluación final")===examen.modalidad); });
   lista.push(examen);
   evGuardarLista(lista);
   evActualizarExams();
@@ -2024,23 +2092,36 @@ function evEliminar(id){
 /* ====== STATE ====== */
 var sel={grado:null,grupo:null,periodo:null}, exam=null, seq=[], idx=0, answers=[], student={nombre:"",documento:""};
 var secondsLeft=0, timerId=null, startedAt=null, submitted=false;
-var SCREENS=["inicio","home","select","identify","instructions","exam","results","recursos","herramientas","retos","juego","resultados","torneos","diario","profesor"];
-var RUTAS={inicio:"inicio",evaluaciones:"home",recursos:"recursos",herramientas:"herramientas",retos:"retos",juego:"juego",resultados:"resultados",torneos:"torneos",diario:"diario",profesor:"profesor"};
+var SCREENS=["inicio","home","select","identify","instructions","exam","results","recursos","herramientas","retos","juego","resultados","torneos","diario","profesor","autoeval"];
+var RUTAS={inicio:"inicio",evaluaciones:"home",recursos:"recursos",herramientas:"herramientas",retos:"retos",juego:"juego",resultados:"resultados",torneos:"torneos",diario:"diario",profesor:"profesor",autoeval:"autoeval"};
 var $=function(s){return document.querySelector(s)};
 function el(t,c){var e=document.createElement(t);if(c)e.className=c;return e}
 function go(name){SCREENS.forEach(function(s){$("#s_"+s).classList.toggle("hidden",s!==name)});window.scrollTo(0,0)}
 
 /* ====== SELECT ====== */
 function uniq(a){return a.filter(function(v,i){return a.indexOf(v)===i})}
+var QUIZ_MODE=false;  // true = navegando la lista de quices, no las evaluaciones finales
+function examsDisponibles(){
+  var modalidadObjetivo=QUIZ_MODE?"Quiz":"Evaluación final";
+  return EXAMS.filter(function(e){ return (e.modalidad||"Evaluación final")===modalidadObjetivo; });
+}
 function initSelect(){
-  var grados=uniq(EXAMS.map(function(e){return e.grado}));
-  var g=$("#selGrado"); g.innerHTML='<option value="">Selecciona…</option>'+grados.map(function(x){return '<option>'+x+'</option>'}).join("");
+  var pool=examsDisponibles();
+  var t=$("#selTitulo"); if(t) t.textContent=QUIZ_MODE?"Encuentra tu quiz":"Encuentra tu evaluación";
+  var grados=uniq(pool.map(function(e){return e.grado}));
+  var g=$("#selGrado");
+  if(!grados.length){
+    g.innerHTML='<option value="">Ninguno disponible todavía</option>';
+    $("#examPreview").innerHTML='<p class="tz-detalle">'+(QUIZ_MODE?"Todavía no hay quices cargados.":"Todavía no hay evaluaciones cargadas.")+'</p>';
+    return;
+  }
+  g.innerHTML='<option value="">Selecciona…</option>'+grados.map(function(x){return '<option>'+x+'</option>'}).join("");
   g.onchange=function(){ sel.grado=g.value; fillGrupos(); };
   $("#selGrupo").onchange=function(){ sel.grupo=$("#selGrupo").value; resolveExam(); };
   $("#selPeriodo").onchange=function(){ sel.periodo=$("#selPeriodo").value; resolveExam(); };
 }
 function fillGrupos(){
-  var ex=EXAMS.filter(function(e){return e.grado===sel.grado});
+  var ex=examsDisponibles().filter(function(e){return e.grado===sel.grado});
   var grupos=uniq([].concat.apply([],ex.map(function(e){return e.grupos})));
   var periodos=["Periodo 1","Periodo 2","Periodo 3"];  // la JMRP maneja 3 periodos
   var gg=$("#selGrupo"); gg.innerHTML='<option value="">Selecciona…</option>'+grupos.map(function(x){return '<option>'+x+'</option>'}).join("");
@@ -2050,7 +2131,7 @@ function fillGrupos(){
 function resolveExam(){
   exam=null;
   if(sel.grado&&sel.grupo&&sel.periodo){
-    exam=EXAMS.find(function(e){return e.grado===sel.grado&&e.grupos.indexOf(sel.grupo)>=0&&e.periodo===sel.periodo})||null;
+    exam=examsDisponibles().find(function(e){return e.grado===sel.grado&&e.grupos.indexOf(sel.grupo)>=0&&e.periodo===sel.periodo})||null;
   }
   var pv=$("#examPreview");
   if(exam){
@@ -2177,7 +2258,7 @@ function finalize(auto){
     respuestas.push({n:q.n,elegida:ch,correcta:q.clave,ok:ok,competencia:q.competencia}); });
   var g=grade(correct,total);
   lastResult={ timestamp:new Date().toISOString(), grado:exam.grado, grupo:sel.grupo, periodo:exam.periodo,
-    examId:exam.id, nombre:student.nombre, documento:student.documento,
+    examId:exam.id, nombre:student.nombre, documento:student.documento, modalidad:exam.modalidad||"Evaluación final",
     aciertos:correct, total:total, puntaje100:g.puntaje100, nota:g.nota, notaExacta:g.notaExacta, nivel:g.nivel, tiempoSeg:used,
     porCompetencia:Object.keys(comp).reduce(function(o,k){o[k]=comp[k].ok+"/"+comp[k].tot;return o},{}), respuestas:respuestas };
   showResults(g,correct,total,used,comp,auto); sendResult(lastResult);
@@ -2260,6 +2341,7 @@ function route(){
   if(h==="torneos")  { renderTorneos(); tzSincronizar(); }
   if(h==="diario")   renderDiario();
   if(h==="profesor") renderProfesor();
+  if(h==="autoeval") renderAutoeval();
   if(h==="inicio")   renderMenu();
   go(RUTAS[h]);
 }
@@ -2294,6 +2376,14 @@ function renderMenu(){
   var p=$("#proximamente");
   if(ocultas.length){ p.classList.remove("hidden"); p.innerHTML='<b>Próximamente</b>'+ocultas.join(" · "); }
   else p.classList.add("hidden");
+  pintarFootLinks(claves);
+}
+function pintarFootLinks(claves){
+  var fl=$("#footLinks"); if(!fl) return;
+  var visibles=claves.filter(function(k){ return SECCIONES[k].visible; });
+  fl.innerHTML=visibles.map(function(k,i){
+    return (i>0?'<span class="sep">·</span>':"")+'<button type="button" onclick="irA(\''+k+'\')">'+esc(SECCIONES[k].titulo)+'</button>';
+  }).join("");
 }
 
 /* ====== UTILIDADES DE LAS SECCIONES ====== */
@@ -2654,6 +2744,128 @@ function comprimirFoto(file,cb){
     img.src=fr.result;
   };
   fr.readAsDataURL(file);
+}
+
+/* ====== AUTOEVALUACIÓN ======
+   Formulario de autoevaluación del estudiante: 4 criterios, cada uno con
+   4 componentes calificados de 3.0 a 5.0. Se guarda en la pestaña
+   "Autoevaluaciones" del MISMO documento de Evaluaciones (reutiliza
+   CONFIG.ENDPOINT — no necesita un backend aparte).                      */
+var AUTOEVAL_CRITERIOS=[
+  { id:"resp", titulo:"Responsabilidad",
+    desc:"Entrega de tareas y actividades a tiempo y sin demoras; llegadas a clase a tiempo y sin llamados de atención por llegadas tarde.",
+    componentes:[
+      {id:"r1", texto:"Entrego las tareas y actividades dentro del plazo establecido."},
+      {id:"r2", texto:"Llego puntual al inicio de la clase."},
+      {id:"r3", texto:"No he tenido llamados de atención por llegar tarde."},
+      {id:"r4", texto:"Cumplo los compromisos que adquiero durante la clase."}
+    ]},
+  { id:"act", titulo:"Actitud en clase",
+    desc:"Participación activa en clase, tanto en actividades libres como en actividades dirigidas.",
+    componentes:[
+      {id:"a1", texto:"Participo activamente en las actividades dirigidas por el docente."},
+      {id:"a2", texto:"Participo activamente en las actividades libres."},
+      {id:"a3", texto:"Muestro disposición e interés durante la clase."},
+      {id:"a4", texto:"Respeto a mis compañeros y al docente durante las actividades."}
+    ]},
+  { id:"rend", titulo:"Rendimiento académico",
+    desc:"Cómo asumí los retos académicos y los resultados prácticos y teóricos que se presentaron.",
+    componentes:[
+      {id:"n1", texto:"Asumo con buena actitud los retos y actividades académicas propuestas."},
+      {id:"n2", texto:"Mis resultados en las actividades prácticas son satisfactorios."},
+      {id:"n3", texto:"Mis resultados en las actividades teóricas (evaluaciones y trabajos) son satisfactorios."},
+      {id:"n4", texto:"He mostrado mejora y avance durante el periodo."}
+    ]},
+  { id:"disc", titulo:"Disciplina",
+    desc:"Llamados de atención, anotaciones y procesos disciplinarios de la clase de Educación Física.",
+    componentes:[
+      {id:"d1", texto:"No he tenido llamados de atención durante la clase."},
+      {id:"d2", texto:"No tengo anotaciones en el observador o seguimiento del área."},
+      {id:"d3", texto:"Cumplo las normas y acuerdos de la clase."},
+      {id:"d4", texto:"No he tenido procesos disciplinarios relacionados con la clase."}
+    ]}
+];
+function renderAutoeval(){
+  var b=$("#body_autoeval");
+  b.innerHTML=
+    '<div class="card pcard" style="margin-bottom:16px">'+
+      '<div class="field"><label for="aeNombre">Nombre completo</label>'+
+        '<input id="aeNombre" type="text" placeholder="Nombre y apellidos"></div>'+
+      '<div class="field"><label for="aeDocumento">Número de documento</label>'+
+        '<input id="aeDocumento" type="text" placeholder="Número de documento" inputmode="numeric"></div>'+
+      '<div class="field"><label for="aeGrado">Grado</label><select id="aeGrado" onchange="aeActualizarGrupos()">'+
+        '<option value="">Selecciona…</option>'+
+        ["6.°","7.°","8.°","9.°","10.°","11.°"].map(function(g){return '<option>'+g+'</option>';}).join("")+
+      '</select></div>'+
+      '<div class="field"><label for="aeGrupo">Grupo</label><select id="aeGrupo">'+
+        '<option value="">Selecciona un grado primero…</option></select></div>'+
+      '<div class="field"><label for="aePeriodo">Periodo</label><select id="aePeriodo">'+
+        '<option value="">Selecciona…</option><option>Periodo 1</option><option>Periodo 2</option><option>Periodo 3</option>'+
+      '</select></div>'+
+    '</div>'+
+    AUTOEVAL_CRITERIOS.map(function(c){
+      return '<div class="ae-crit"><h3>'+esc(c.titulo)+'</h3><p class="ae-desc">'+esc(c.desc)+'</p>'+
+        c.componentes.map(function(comp){
+          var vid="ae_"+comp.id;
+          return '<div class="ae-comp"><div class="ae-comp-top"><span class="ae-comp-txt">'+esc(comp.texto)+'</span>'+
+            '<span class="ae-comp-val" id="'+vid+'_val">4.0</span></div>'+
+            '<input type="range" id="'+vid+'" min="3.0" max="5.0" step="0.1" value="4.0" '+
+            'oninput="$(\'#'+vid+'_val\').textContent=parseFloat(this.value).toFixed(1)"></div>';
+        }).join("")+
+      '</div>';
+    }).join("")+
+    '<div class="err" id="aeErr"></div>'+
+    '<button class="btn btn-primary" style="width:100%" onclick="aeEnviar()">Guardar mi autoevaluación</button>'+
+    '<div id="aeResultado"></div>';
+}
+
+function aeCalcular(){
+  var porCriterio={}, sumaTotal=0, nComp=0;
+  AUTOEVAL_CRITERIOS.forEach(function(c){
+    var suma=0;
+    c.componentes.forEach(function(comp){
+      var v=parseFloat($("#ae_"+comp.id).value)||3.0;
+      suma+=v; sumaTotal+=v; nComp++;
+    });
+    porCriterio[c.titulo]=Math.round((suma/c.componentes.length)*10)/10;
+  });
+  return { porCriterio:porCriterio, promedioFinal:Math.round((sumaTotal/nComp)*10)/10 };
+}
+
+function aeEnviar(){
+  var nombre=($("#aeNombre").value||"").trim();
+  var documento=($("#aeDocumento").value||"").trim();
+  var grado=$("#aeGrado").value, grupo=($("#aeGrupo").value||"").trim(), periodo=$("#aePeriodo").value;
+  if(!nombre||!documento||!grado||!grupo||!periodo){
+    $("#aeErr").textContent="Completa tu nombre, documento, grado, grupo y periodo antes de guardar.";
+    return;
+  }
+  $("#aeErr").textContent="";
+  var r=aeCalcular();
+  var payload={ tipo:"autoeval", timestamp:new Date().toISOString(), nombre:nombre, documento:documento,
+    grado:grado, grupo:grupo, periodo:periodo, porCriterio:r.porCriterio, promedioFinal:r.promedioFinal };
+  if(CONFIG.ENDPOINT){
+    try{ fetch(CONFIG.ENDPOINT,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(payload)}); }catch(e){}
+  }
+  var comps=Object.keys(r.porCriterio);
+  $("#aeResultado").innerHTML=
+    '<div class="gsec" style="margin-top:18px"><div class="gt"><span>Tu resultado</span></div>'+
+    '<div class="comps">'+comps.map(function(k){
+      var pc=Math.round((r.porCriterio[k]-3.0)/2.0*100);
+      return '<div class="comp"><div class="top"><span>'+esc(k)+'</span><span>'+r.porCriterio[k].toFixed(1)+'</span></div>'+
+             '<div class="track"><div class="fill" style="width:'+Math.max(4,pc)+'%"></div></div></div>';
+    }).join("")+'</div>'+
+    '<div class="ae-avg">Promedio final <b>'+r.promedioFinal.toFixed(1)+' / 5.0</b></div></div>';
+  $("#aeResultado").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function irAQuiz(){ QUIZ_MODE=true; go("select"); initSelect(); }
+function irAEvaluacionFormal(){ QUIZ_MODE=false; go("select"); initSelect(); }
+function gruposDe(grado){ if(!grado) return []; var n=grado.replace(".°",""); return [n+"-1",n+"-2"]; }
+function aeActualizarGrupos(){
+  var g=$("#aeGrado").value, gr=$("#aeGrupo");
+  gr.innerHTML='<option value="">Selecciona…</option>'+gruposDe(g).map(function(x){return '<option>'+x+'</option>';}).join("");
 }
 
 /* ====== JUEGO: "Corre y salta" ======
