@@ -625,7 +625,7 @@ $("#dlBtn").addEventListener("click",function(){ if(!lastResult)return; var p=la
 window.addEventListener("beforeunload",function(e){ if(startedAt&&!submitted){e.preventDefault();e.returnValue=""} });
 
 /* ====== ESCUDO (una sola copia, se aplica a todas las pantallas) ====== */
-var CREST="img/escudo.jpg";
+var CREST="escudo.jpg";
 function initCrest(){
   document.querySelectorAll("[data-crest]").forEach(function(i){ i.src=CREST; });
   var l=document.createElement("link"); l.rel="icon"; l.href=CREST; document.head.appendChild(l);

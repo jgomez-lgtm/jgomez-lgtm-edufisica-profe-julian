@@ -244,7 +244,7 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
 }
 #s_inicio::before{
   content:'';position:absolute;inset:0;
-  background:url('../img/fondo.jpg') center center / 420px no-repeat;
+  background:url('fondo.jpg') center center / 420px no-repeat;
   opacity:.14;pointer-events:none;z-index:0;
 }
 #s_inicio>.panel{position:relative;z-index:1}
