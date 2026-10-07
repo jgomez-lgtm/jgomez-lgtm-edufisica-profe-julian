@@ -1740,7 +1740,7 @@ var MODALIDAD_TORNEO = "Interclases Tiempo Libre";
    Script (como el de las evaluaciones). Pega aquí la URL /exec,
    pon activo:true y cambia SECCIONES.diario.visible a true.
    meta: minutos semanales que se proponen como objetivo.               */
-var DIARIO = { activo:true, ENDPOINT:"", meta:180 };
+var DIARIO = { activo:true, ENDPOINT:EVIDENCIAS.ENDPOINT, meta:180 }; // usa el mismo Apps Script de Evidencias
 
 var CONFIG = { ENDPOINT: "https://script.google.com/macros/s/AKfycbwzb0tlOv5im38_2d1CfYbJEDqonj8h4wcpPyZu-05jJzk-Wz8f1HyomsqabeBAxIX1IA/exec" };
 
@@ -2654,9 +2654,15 @@ function retoEvidenciaWire(grado,periodoId,r){
             comentario:$("#"+rid+"_com").value.trim(), enlace:tipo==="enlace"?en:"",
             archivo:tipo==="foto"?fotoLista:null };
     var btn=$("#"+rid+"_send"); btn.disabled=true; btn.textContent="Enviando…";
-    fetch(EVIDENCIAS.ENDPOINT,{method:"POST",mode:"no-cors",
+    fetch(EVIDENCIAS.ENDPOINT,{method:"POST",
       headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)})
-      .then(function(){
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if(!j||!j.ok){
+          btn.disabled=false; btn.textContent="Enviar mi evidencia";
+          err.textContent="No se recibió: "+((j&&j.error)||"respuesta no válida")+"";
+          return;
+        }
         $("#"+rid+"_form").classList.add("hidden");
         $("#"+rid+"_ok").classList.remove("hidden");
       })
@@ -3291,7 +3297,7 @@ document.addEventListener("keyup",function(e){
    cambio también se intenta enviar a esa hoja de cálculo.                */
 var TZ_KEY="jmrp_torneos_v1";
 var tzCache=null;                // copia en memoria (evita releer localStorage todo el tiempo)
-var tzClaveOK="";                // clave con la que el profesor entró (se envía al guardar)
+var tzClaveOK=(function(){ try{ return sessionStorage.getItem("jmrp_prof_clave")||""; }catch(e){ return ""; } })();                // clave con la que el profesor entró (se envía al guardar)
 var tzFiltroDeporte="Todos";     // filtro de la vista pública
 var tzPlanillaAbierta=null;      // id del partido con la planilla desplegada
 var tzEditando=null;             // id del torneo en edición (agregar equipos)
@@ -3310,9 +3316,18 @@ function tzGuardar(lista){
   tzCache=lista;
   try{ localStorage.setItem(TZ_KEY,JSON.stringify(lista)); }catch(e){}
   if(TORNEOS.ENDPOINT){
-    try{ fetch(TORNEOS.ENDPOINT,{method:"POST",mode:"no-cors",
+    fetch(TORNEOS.ENDPOINT,{method:"POST",
       headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify({tipo:"torneos",clave:tzClaveOK,actualizado:new Date().toISOString(),data:lista})}); }catch(e){}
+      body:JSON.stringify({tipo:"torneos",clave:tzClaveOK,actualizado:new Date().toISOString(),data:lista})})
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if(!j||!j.ok) showModal("No se guardó en la hoja",
+          esc((j&&j.error)||"Respuesta no válida.")+"<br>El cambio quedó solo en este navegador. Sal del panel, vuelve a entrar con la clave e inténtalo de nuevo.",
+          "Entendido",function(){});
+      })
+      .catch(function(){
+        showModal("Sin conexión","El cambio quedó solo en este navegador. Revisa tu conexión y vuelve a guardarlo.","Entendido",function(){});
+      });
   }
 }
 function tzSincronizar(){
@@ -3632,13 +3647,13 @@ function profIntentarEntrar(){
     .then(function(j){
       if(j&&j.ok){
         tzClaveOK=v;
-        try{ sessionStorage.setItem(PROF_SESSION_KEY,"1"); }catch(e){}
+        try{ sessionStorage.setItem(PROF_SESSION_KEY,"1"); sessionStorage.setItem("jmrp_prof_clave",v); }catch(e){}
         renderProfesor();
       } else { err.textContent="Clave incorrecta."; }
     })
     .catch(function(){ err.textContent="No se pudo verificar la clave. Revisa tu conexión e inténtalo de nuevo."; });
 }
-function profSalirTodo(){ try{ sessionStorage.removeItem(PROF_SESSION_KEY); }catch(e){} tzClaveOK=""; renderProfesor(); }
+function profSalirTodo(){ try{ sessionStorage.removeItem(PROF_SESSION_KEY); sessionStorage.removeItem("jmrp_prof_clave"); }catch(e){} tzClaveOK=""; renderProfesor(); }
 
 function renderProfesor(){
   var b=$("#body_profesor"); if(!b) return;
@@ -3670,7 +3685,7 @@ function profRenderDiario(){
   b.innerHTML='<div class="card pcard"><div class="eyebrow">Diario de actividad física</div>'+
     '<h2 class="ptitle" style="font-size:20px;margin-bottom:10px">Registros de los estudiantes</h2>'+
     (DIARIO.ENDPOINT
-      ? '<p class="psub">Cada registro que guarda un estudiante se envía a tu hoja de cálculo conectada. Ábrela directamente para revisar los minutos de actividad por estudiante y por semana.</p>'
+      ? '<p class="psub">Cada registro que guarda un estudiante llega a la pestaña <b>Diario</b> de la hoja <i>Evidencias Educación Física — JMRP</i>. Ábrela para revisar los minutos por estudiante y por semana (puedes filtrar por grado, grupo o documento).</p>'
       : '<p class="psub">Todavía no conectaste una hoja de cálculo para el Diario (<code>DIARIO.ENDPOINT</code> está vacío en el código). Mientras tanto, cada estudiante guarda sus minutos solo en su propio navegador y no puedes verlos desde aquí. Si quieres centralizarlos como ya funciona con Torneos, dime y preparamos el mismo tipo de backend (un Code.gs y una hoja de cálculo).</p>')+
     '</div>';
 }
@@ -3693,6 +3708,45 @@ function dLoadProfile(doc){
 }
 function dSaveProfile(p){
   localStorage.setItem(dProfile(p.documento),JSON.stringify(p));
+}
+
+/* ---- sincronización con la hoja (Apps Script de Evidencias y Diario) ---- */
+function dPost(body){
+  return fetch(DIARIO.ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)})
+    .then(function(r){ return r.json(); });
+}
+function dMarcarEnviado(doc,id){
+  var arr=dLoadEntries(doc);
+  arr.forEach(function(e){ if(e.id===id) e.enviado=true; });
+  try{ localStorage.setItem(dKey(doc),JSON.stringify(arr)); }catch(e){}
+}
+function dEnviar(u,entry){
+  if(!DIARIO.ENDPOINT) return;
+  dPost({tipo:"diario",id:entry.id,timestamp:entry.timestamp,nombre:u.nombre,documento:u.documento,
+    grado:u.grado,grupo:u.grupo,fecha:entry.fecha,hora:entry.hora,actividad:entry.actividad,
+    minutos:entry.minutos,intensidad:entry.intensidad,nota:entry.nota})
+    .then(function(j){ if(j&&j.ok) dMarcarEnviado(u.documento,entry.id); })
+    .catch(function(){});
+}
+var dSincronizado={};
+function dSincronizar(u){
+  if(!DIARIO.ENDPOINT||dSincronizado[u.documento]) return;
+  dSincronizado[u.documento]=true;
+  /* 1) reenvía lo que no alcanzó a llegar (incluye registros de antes de 2027) */
+  dLoadEntries(u.documento).forEach(function(e){ if(e.enviado!==true) dEnviar(u,e); });
+  /* 2) trae lo registrado desde otros dispositivos */
+  dPost({tipo:"diario_historial",documento:u.documento,nombre:u.nombre})
+    .then(function(j){
+      if(!j||!j.ok||!Array.isArray(j.data)) return;
+      var arr=dLoadEntries(u.documento), ids={};
+      arr.forEach(function(e){ ids[e.id]=true; });
+      var nuevos=j.data.filter(function(e){ return !ids[e.id]; })
+        .map(function(e){ e.enviado=true; e.foto=null; return e; });
+      if(!nuevos.length) return;
+      try{ localStorage.setItem(dKey(u.documento),JSON.stringify(arr.concat(nuevos))); }catch(e){}
+      if(diarioUser&&diarioUser.documento===u.documento) renderDiario();
+    })
+    .catch(function(){});
 }
 
 /* ---- helpers de fecha ---- */
@@ -3734,7 +3788,7 @@ function dLoginScreen(b,hdr){
         '<input id="dLoginDoc" type="text" inputmode="numeric" placeholder="Solo números" autocomplete="off"></div>'+
       '<div class="err" id="dLoginErr"></div>'+
       '<button class="btn btn-primary" style="width:100%" id="dLoginBtn">Entrar a mi diario</button>'+
-      '<div class="aviso" style="margin-top:14px">Tu información se guarda de forma privada en este dispositivo con fines académicos, conforme a la Ley 1581 de 2012.</div>'+
+      '<div class="aviso" style="margin-top:14px">Tus registros se guardan en este dispositivo y en la hoja privada del área de Educación Física, solo con fines académicos, conforme a la Ley 1581 de 2012. Si entras desde otro dispositivo, usa el mismo documento y tu mismo primer nombre para recuperar tu historial.</div>'+
     '</div>';
   $("#dLoginBtn").addEventListener("click",function(){
     var doc=$("#dLoginDoc").value.trim();
@@ -3780,7 +3834,9 @@ function dRegisterScreen(b,doc){
 
 /* ---- PANTALLA 2: Dashboard ---- */
 function dDashboard(b,hdr){
-  var u=diarioUser, entries=dLoadEntries(u.documento);
+  var u=diarioUser;
+  dSincronizar(u);
+  var entries=dLoadEntries(u.documento);
   var init=u.nombre.split(" ").map(function(w){return w[0];}).join("").slice(0,2).toUpperCase();
 
   /* Calcular resumen semanal */
@@ -3890,16 +3946,9 @@ function dTabRegistrar(u,entries){
         intensidad:int2, nota:nota,
         foto:fotoData||null
       };
+      entry.enviado=false;
       dSaveEntry(u.documento,entry);
-
-      /* Enviar a Google Sheets si hay endpoint */
-      if(DIARIO.ENDPOINT){
-        var payload={tipo:"diario",timestamp:entry.timestamp,nombre:u.nombre,
-          documento:u.documento,grado:u.grado,grupo:u.grupo,
-          fecha:fecha,hora:hora,actividad:act,minutos:entry.minutos,
-          intensidad:int2,nota:nota};
-        try{ fetch(DIARIO.ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)}); }catch(e){}
-      }
+      dEnviar(u,entry); /* a la hoja del área; si falla, se reintenta al volver a entrar */
 
       /* Recargar dashboard */
       renderDiario();
