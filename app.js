@@ -437,14 +437,38 @@ function startExam(){
   } else beginExam();
 }
 function checkEligibility(cb){
-  var name="__cb"+Date.now(), s, done=false;
-  var to=setTimeout(function(){ cleanup(); cb(false); }, 6000); // si no responde, se permite continuar
-  function cleanup(){ if(done)return; done=true; try{delete window[name];}catch(e){window[name]=undefined;} if(s&&s.parentNode)s.parentNode.removeChild(s); clearTimeout(to); }
-  window[name]=function(j){ cleanup(); cb(!!(j&&j.presentado), !!(j&&j.abierta===false)); };
-  s=document.createElement("script");
-  s.src=CONFIG.ENDPOINT+(CONFIG.ENDPOINT.indexOf("?")>=0?"&":"?")+"check=1&callback="+name+"&documento="+encodeURIComponent(student.documento)+"&examId="+encodeURIComponent(exam.id);
-  s.onerror=function(){ cleanup(); cb(false); };
-  document.body.appendChild(s);
+  /* Pregunta al Apps Script si este documento ya presentó la evaluación y si
+     está abierta. Usa fetch + leerJSON (tolera la respuesta envuelta en HTML
+     que Google entrega a veces) y reintenta una vez. Si no hay respuesta,
+     se permite continuar: el servidor igual impide guardar un 2.º intento. */
+  var url=CONFIG.ENDPOINT+(CONFIG.ENDPOINT.indexOf("?")>=0?"&":"?")+"check=1&callback=cb"+
+    "&documento="+encodeURIComponent(student.documento)+"&examId="+encodeURIComponent(exam.id);
+  var listo=false;
+  var to=setTimeout(function(){ if(!listo){ listo=true; cb(false,false); } }, 9000);
+  function intentar(n){
+    fetch(url+"&t="+Date.now()).then(leerJSON)
+      .then(function(j){ if(listo)return; listo=true; clearTimeout(to); cb(!!(j&&j.presentado), !!(j&&j.abierta===false)); })
+      .catch(function(){ if(listo)return; if(n<1) intentar(n+1); else { listo=true; clearTimeout(to); cb(false,false); } });
+  }
+  intentar(0);
+}
+/* Lee la respuesta de un Apps Script como JSON. Google a veces la entrega
+   envuelta en una página HTML o como JSONP (cb({...})); aquí se aceptan
+   las tres formas. */
+function leerJSON(r){
+  return r.text().then(function(t){
+    t=String(t||"").trim();
+    try{ return JSON.parse(t); }catch(e){}
+    var s=t;
+    if(/^\s*</.test(t)){
+      var d=new DOMParser().parseFromString(t,"text/html");
+      d.querySelectorAll("script,style,noscript").forEach(function(x){ x.remove(); });
+      s=((d.body&&d.body.textContent)||"").trim();
+    }
+    var m=s.match(/^[\w$.]*\(([\s\S]*)\)\s*;?\s*$/);
+    if(m) s=m[1];
+    return JSON.parse(s);
+  });
 }
 function beginExam(){
   seq=buildSequence();
@@ -534,7 +558,7 @@ function enviarParaCalificar(){
   var note=$("#sendNote");
   note.innerHTML='<span style="color:var(--muted)">Enviando y calificando tus respuestas…</span>';
   fetch(CONFIG.ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(lastPayload)})
-    .then(function(r){ return r.json(); })
+    .then(leerJSON)
     .then(function(j){
       if(!j||!j.ok) throw new Error((j&&j.error)||"Respuesta no válida del servidor.");
       mostrarResultadoServidor(j);
@@ -914,7 +938,7 @@ function retoEvidenciaWire(grado,periodoId,r){
     var btn=$("#"+rid+"_send"); btn.disabled=true; btn.textContent="Enviando…";
     fetch(EVIDENCIAS.ENDPOINT,{method:"POST",
       headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)})
-      .then(function(r){ return r.json(); })
+      .then(leerJSON)
       .then(function(j){
         if(!j||!j.ok){
           btn.disabled=false; btn.textContent="Enviar mi evidencia";
@@ -940,7 +964,7 @@ function renderResultados(){
   if(!CONFIG.ENDPOINT){ b.innerHTML=h+construccion("resultados"); return; }
   b.innerHTML=h+'<div class="card pcard" style="max-width:620px"><p class="psub">Cargando resultados…</p></div>';
   fetch(CONFIG.ENDPOINT+(CONFIG.ENDPOINT.indexOf("?")>=0?"&":"?")+"resultados=1")
-    .then(function(r){ return r.json(); })
+    .then(leerJSON)
     .then(function(json){
       RES_DATA=(json&&json.ok&&Array.isArray(json.data))?json.data:[];
       resDibujar();
@@ -1206,7 +1230,7 @@ function jgSincronizar(){
   var b=$("#body_juego");
   if(!JUEGO.ENDPOINT){ if(b) b.innerHTML=construccion("juego"); return; }
   fetch(JUEGO.ENDPOINT+(JUEGO.ENDPOINT.indexOf("?")>=0?"&":"?")+"accion=juego")
-    .then(function(r){ return r.json(); })
+    .then(leerJSON)
     .then(function(json){
       if(json&&json.ok&&Array.isArray(json.data)){ jgPintarTabla(json.data); }
       else if(b){ b.innerHTML='<p class="tz-detalle">No se pudo cargar la tabla de récords.</p>'; }
@@ -1388,7 +1412,7 @@ function eaSincronizar(){
   var b=$("#body_juego2");
   if(!JUEGO2.ENDPOINT){ if(b) b.innerHTML=construccion("juego"); return; }
   fetch(JUEGO2.ENDPOINT+(JUEGO2.ENDPOINT.indexOf("?")>=0?"&":"?")+"accion=atrapa")
-    .then(function(r){ return r.json(); })
+    .then(leerJSON)
     .then(function(json){
       if(json&&json.ok&&Array.isArray(json.data)){ eaPintarTabla(json.data); }
       else if(b){ b.innerHTML='<p class="tz-detalle">No se pudo cargar la tabla de récords.</p>'; }
@@ -1577,7 +1601,7 @@ function tzGuardar(lista){
     fetch(TORNEOS.ENDPOINT,{method:"POST",
       headers:{"Content-Type":"text/plain;charset=utf-8"},
       body:JSON.stringify({tipo:"torneos",clave:tzClaveOK,actualizado:new Date().toISOString(),data:lista})})
-      .then(function(r){ return r.json(); })
+      .then(leerJSON)
       .then(function(j){
         if(!j||!j.ok) showModal("No se guardó en la hoja",
           esc((j&&j.error)||"Respuesta no válida.")+"<br>El cambio quedó solo en este navegador. Sal del panel, vuelve a entrar con la clave e inténtalo de nuevo.",
@@ -1591,7 +1615,7 @@ function tzGuardar(lista){
 function tzSincronizar(){
   if(!TORNEOS.ENDPOINT) return;
   fetch(TORNEOS.ENDPOINT+(TORNEOS.ENDPOINT.indexOf("?")>=0?"&":"?")+"accion=torneos")
-    .then(function(r){ return r.json(); })
+    .then(leerJSON)
     .then(function(json){
       if(json&&json.ok&&Array.isArray(json.data)){
         tzCache=json.data;
@@ -1901,7 +1925,7 @@ function profIntentarEntrar(){
   err.textContent="Verificando…";
   fetch(CONFIG.ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
     body:JSON.stringify({tipo:"login",clave:v})})
-    .then(function(r){ return r.json(); })
+    .then(leerJSON)
     .then(function(j){
       if(j&&j.ok){
         tzClaveOK=v;
@@ -1971,7 +1995,7 @@ function dSaveProfile(p){
 /* ---- sincronización con la hoja (Apps Script de Evidencias y Diario) ---- */
 function dPost(body){
   return fetch(DIARIO.ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)})
-    .then(function(r){ return r.json(); });
+    .then(leerJSON);
 }
 function dMarcarEnviado(doc,id){
   var arr=dLoadEntries(doc);
