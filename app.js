@@ -382,16 +382,32 @@ function fillGrupos(){
   var pp=$("#selPeriodo"); pp.innerHTML='<option value="">Selecciona…</option>'+periodos.map(function(x){return '<option>'+x+'</option>'}).join("");
   sel.grupo=null; sel.periodo=null; resolveExam();
 }
+/* Si en un mismo grado, grupo y periodo hay varias opciones (p. ej., Quiz 1 y
+   Quiz 2), el estudiante escoge una tocando su tarjeta. */
+var opcionesExam=[];
+function tarjetaExam(e,i,elegible){
+  var marcada=elegible&&exam===e;
+  return '<div class="examcard"'+(elegible?' role="button" tabindex="0" onclick="elegirExam('+i+')" onkeydown="if(event.key===\'Enter\')elegirExam('+i+')" style="cursor:pointer;'+
+      (marcada?'outline:3px solid var(--green-d);':'')+'"':'')+'><div class="t">'+(elegible?(marcada?'● ':'○ '):'')+e.titulo+'</div><div class="meta">'+
+    '<span class="pill">'+e.area+'</span><span class="pill">'+e.grado+'</span>'+
+    '<span class="pill">'+e.preguntas.length+' preguntas</span><span class="pill">'+e.timeLimitMin+' minutos</span></div></div>';
+}
+function elegirExam(i){ exam=opcionesExam[i]||null; pintarOpcionesExam(); }
+function pintarOpcionesExam(){
+  $("#examPreview").innerHTML='<p class="tz-detalle">Hay '+opcionesExam.length+' opciones en este periodo. Toca la que vas a presentar:</p>'+
+    opcionesExam.map(function(e,i){ return tarjetaExam(e,i,true); }).join("");
+  $("#toIdentify").disabled=!exam;
+}
 function resolveExam(){
-  exam=null;
+  exam=null; opcionesExam=[];
   if(sel.grado&&sel.grupo&&sel.periodo){
-    exam=examsDisponibles().find(function(e){return e.grado===sel.grado&&e.grupos.indexOf(sel.grupo)>=0&&e.periodo===sel.periodo})||null;
+    opcionesExam=examsDisponibles().filter(function(e){return e.grado===sel.grado&&e.grupos.indexOf(sel.grupo)>=0&&e.periodo===sel.periodo});
+    if(opcionesExam.length===1) exam=opcionesExam[0];
   }
   var pv=$("#examPreview");
+  if(opcionesExam.length>1){ pintarOpcionesExam(); return; }
   if(exam){
-    pv.innerHTML='<div class="examcard"><div class="t">'+exam.titulo+'</div><div class="meta">'+
-      '<span class="pill">'+exam.area+'</span><span class="pill">'+exam.grado+'</span>'+
-      '<span class="pill">'+exam.preguntas.length+' preguntas</span><span class="pill">'+exam.timeLimitMin+' minutos</span></div></div>';
+    pv.innerHTML=tarjetaExam(exam,0,false);
   } else { pv.innerHTML = (sel.grado&&sel.grupo&&sel.periodo)?'<div class="examcard"><div class="t">Sin evaluación disponible para este periodo</div><div class="meta"><span class="pill">Próximamente</span></div></div>':''; }
   $("#toIdentify").disabled=!exam;
 }
@@ -489,6 +505,9 @@ function render(){
     var b=el("div","rblock");
     b.innerHTML='<div class="rlabel">Texto '+t.id+'</div><h2>'+t.titulo+'</h2><div class="rinstr">Lee el texto con atención para responder.</div><p class="body">'+t.cuerpo+'</p>';
     rd.appendChild(b); });
+  // Preguntas sin texto de lectura (p. ej., quices cortos): se oculta el panel vacío.
+  rd.style.display=rd.children.length?"":"none";
+  rd.parentNode.style.gridTemplateColumns=rd.children.length?"":"minmax(0,1fr)";
   rd.scrollTop=0;
   $("#qNow").textContent=idx+1;
   $("#qStem").textContent=(idx+1)+". "+q.enunciado;
