@@ -192,6 +192,20 @@ var RECURSOS = [
     descripcion:"Valgo dinámico, aterrizajes rígidos y patrones de absorción de carga: cómo prevenir la rotura del ligamento cruzado anterior.",
     url:"https://www.youtube.com/results?search_query=prevención+lesión+LCA+rodilla+deportistas+biomecánica" },
 
+  /* ===== GRADO 10.° — Hábitos de vida saludables ===== */
+  { grado:"10.°", tipo:"Guía", titulo:"Directrices de la OMS sobre actividad física y comportamiento sedentario (2020)",
+    descripcion:"Cuánta actividad física necesitan los adolescentes: en promedio 60 minutos diarios de intensidad moderada a vigorosa y menos tiempo sentado frente a pantallas.",
+    url:"https://www.who.int/publications/i/item/9789240015128" },
+  { grado:"10.°", tipo:"Artículo", titulo:"Alimentación saludable — OMS",
+    descripcion:"Qué es una dieta sana: más frutas, verduras y cereales integrales, y menos azúcares libres, sal y grasas. Incluye recomendaciones por edad.",
+    url:"https://www.who.int/es/news-room/fact-sheets/detail/healthy-diet" },
+  { grado:"10.°", tipo:"Artículo", titulo:"Bebidas energéticas y deportivas: lo que dice la Academia Americana de Pediatría",
+    descripcion:"Por qué el agua es la mejor forma de hidratarse en la actividad física y por qué los adolescentes no deben tomar bebidas energizantes.",
+    url:"https://www.healthychildren.org/Spanish/news/Paginas/kids-should-not-consume-energy-drinks-and-rarely-need-sports-drinks-says-aap.aspx" },
+  { grado:"10.°", tipo:"Infografía", titulo:"¿Cuántas horas de sueño necesitas? — HealthyChildren (AAP)",
+    descripcion:"Los adolescentes de 13 a 18 años necesitan de 8 a 10 horas de sueño. Dormir bien mejora la memoria, la concentración y el rendimiento.",
+    url:"https://www.healthychildren.org/Spanish/healthy-living/sleep/Paginas/Healthy-Sleep-Habits-How-Many-Hours-Does-Your-Child-Need.aspx" },
+
   /* ===== GRADO 11.° — Gestión de torneos y sistemas de competencia ===== */
   { grado:"11.°", tipo:"Artículo", titulo:"Sistemas de competencia: todos contra todos y eliminación directa",
     descripcion:"Fórmulas, ventajas y desventajas de cada sistema. Cuándo usar liga, eliminación o sistema mixto.",
@@ -204,7 +218,20 @@ var RECURSOS = [
     url:"https://www.youtube.com/results?search_query=cómo+organizar+torneo+deportivo+escolar+fixture" },
   { grado:"11.°", tipo:"Artículo", titulo:"Introducción a la táctica del voleibol: sistemas de juego",
     descripcion:"Comparación de los sistemas 4-2 y 5-1: estabilidad vs. potencia ofensiva, según el nivel del equipo.",
-    url:"https://voleyporelmundo.com/2022/03/15/introduccion-a-la-tactica-2-sistemas-de-juego/" }
+    url:"https://voleyporelmundo.com/2022/03/15/introduccion-a-la-tactica-2-sistemas-de-juego/" },
+  /* ===== GRADO 11.° — Hábitos de vida saludables ===== */
+  { grado:"11.°", tipo:"Guía", titulo:"Directrices de la OMS sobre actividad física y comportamiento sedentario (2020)",
+    descripcion:"Cuánta actividad física necesitan los adolescentes: en promedio 60 minutos diarios de intensidad moderada a vigorosa y menos tiempo sentado frente a pantallas.",
+    url:"https://www.who.int/publications/i/item/9789240015128" },
+  { grado:"11.°", tipo:"Artículo", titulo:"Alimentación saludable — OMS",
+    descripcion:"Qué es una dieta sana: más frutas, verduras y cereales integrales, y menos azúcares libres, sal y grasas. Incluye recomendaciones por edad.",
+    url:"https://www.who.int/es/news-room/fact-sheets/detail/healthy-diet" },
+  { grado:"11.°", tipo:"Artículo", titulo:"Bebidas energéticas y deportivas: lo que dice la Academia Americana de Pediatría",
+    descripcion:"Por qué el agua es la mejor forma de hidratarse en la actividad física y por qué los adolescentes no deben tomar bebidas energizantes.",
+    url:"https://www.healthychildren.org/Spanish/news/Paginas/kids-should-not-consume-energy-drinks-and-rarely-need-sports-drinks-says-aap.aspx" },
+  { grado:"11.°", tipo:"Infografía", titulo:"¿Cuántas horas de sueño necesitas? — HealthyChildren (AAP)",
+    descripcion:"Los adolescentes de 13 a 18 años necesitan de 8 a 10 horas de sueño. Dormir bien mejora la memoria, la concentración y el rendimiento.",
+    url:"https://www.healthychildren.org/Spanish/healthy-living/sleep/Paginas/Healthy-Sleep-Habits-How-Many-Hours-Does-Your-Child-Need.aspx" }
 ];
 
 /* =====================================================================
