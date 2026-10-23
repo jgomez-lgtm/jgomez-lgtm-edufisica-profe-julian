@@ -361,7 +361,7 @@ function examsDisponibles(){
 }
 function initSelect(){
   var pool=examsDisponibles();
-  var t=$("#selTitulo"); if(t) t.textContent=QUIZ_MODE?"Encuentra tu quiz":"Encuentra tu evaluación";
+  var t=$("#selTitulo"); if(t) t.textContent=QUIZ_MODE?"Encuentra tu quiz o taller":"Encuentra tu evaluación";
   var grados=uniq(pool.map(function(e){return e.grado}));
   var g=$("#selGrado");
   if(!grados.length){
