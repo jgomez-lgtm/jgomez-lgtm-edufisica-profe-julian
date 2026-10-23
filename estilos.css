@@ -348,3 +348,10 @@ input[type=file]{width:100%;font-size:14px;padding:11px;border:1.5px dashed var(
 .minilist .mi button{background:none;border:none;color:var(--bad);font-weight:700;font-size:12.5px}
 .tz-select-card{max-width:640px;margin-bottom:18px}
 .tz-orgtabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px}
+
+/* ===== RUTA: hábitos saludables (reutiliza .reto, .tabs, .progress, .check) ===== */
+.ruta-lista{list-style:none;display:grid;gap:14px;max-width:760px}
+.ruta-paso.ruta-hecho{border-top-color:var(--green-l)}
+.ruta-paso:focus{outline:2px solid var(--gold);outline-offset:3px}
+.ruta-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.ruta-btns .btn,.ruta-btns .btn-ghost{font-size:14.5px;padding:10px 16px}
