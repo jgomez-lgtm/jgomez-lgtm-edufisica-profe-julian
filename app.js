@@ -385,6 +385,7 @@ function fillGrupos(){
 /* Si en un mismo grado, grupo y periodo hay varias opciones (p. ej., Quiz 1 y
    Quiz 2), el estudiante escoge una tocando su tarjeta. */
 var opcionesExam=[];
+var RUTA_PREF=null;  // final del ID que la Ruta deja preseleccionado (p. ej., "-p2-quiz")
 function tarjetaExam(e,i,elegible){
   var marcada=elegible&&exam===e;
   return '<div class="examcard"'+(elegible?' role="button" tabindex="0" onclick="elegirExam('+i+')" onkeydown="if(event.key===\'Enter\')elegirExam('+i+')" style="cursor:pointer;'+
@@ -403,6 +404,7 @@ function resolveExam(){
   if(sel.grado&&sel.grupo&&sel.periodo){
     opcionesExam=examsDisponibles().filter(function(e){return e.grado===sel.grado&&e.grupos.indexOf(sel.grupo)>=0&&e.periodo===sel.periodo});
     if(opcionesExam.length===1) exam=opcionesExam[0];
+    else if(RUTA_PREF){ for(var i=0;i<opcionesExam.length;i++){ var id=opcionesExam[i].id; if(id.slice(-RUTA_PREF.length)===RUTA_PREF){ exam=opcionesExam[i]; break; } } }
   }
   var pv=$("#examPreview");
   if(opcionesExam.length>1){ pintarOpcionesExam(); return; }
@@ -705,10 +707,20 @@ function route(){
   if(h==="autoeval") renderAutoeval();
   if(h==="inicio"||h==="ruta") RECURSOS_FILTRO=null;   // el filtro de Recursos solo vale al venir desde la Ruta
   if(h==="ruta")     renderRuta();
+  if(h==="evaluaciones") ajustarBotonesEvaluaciones();
   if(h==="inicio")   renderMenu();
   go(RUTAS[h]);
 }
 window.addEventListener("hashchange",route);
+
+/* Si no hay evaluaciones finales en la plataforma (hoy todo es quiz o taller),
+   se oculta «Presentar una evaluación» y el botón de quiz pasa a ser el principal. */
+function ajustarBotonesEvaluaciones(){
+  var hayFinales=EXAMS.some(function(e){ return (e.modalidad||"Evaluación final")!=="Quiz"; });
+  var bf=document.querySelector('#s_home [onclick="irAEvaluacionFormal()"]'), bq=document.querySelector('#s_home [onclick="irAQuiz()"]');
+  if(bf) bf.classList.toggle("hidden",!hayFinales);
+  if(bq){ bq.classList.toggle("btn",!hayFinales); bq.classList.toggle("btn-primary",!hayFinales); bq.classList.toggle("btn-ghost",hayFinales); bq.style.marginTop=hayFinales?"10px":"0"; }
+}
 
 /* ====== ÍCONOS ====== */
 var SVG='stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"';
@@ -853,7 +865,7 @@ function rutaIr(destino){
   if(p[0]==="paso"){
     var e=$("#rutaPaso"+p[1]); if(e){ e.scrollIntoView({behavior:"smooth",block:"start"}); e.focus({preventScroll:true}); }
   } else if(p[0]==="quiz"){
-    irAQuiz();                                  // misma pantalla de selección de siempre,
+    irAQuiz(); RUTA_PREF=p[2]||null;            // misma pantalla de selección de siempre,
     var sg=$("#selGrado"); sg.value=g;          // con el grado y el periodo ya elegidos:
     if(sg.value===g){ sel.grado=g; fillGrupos(); var sp=$("#selPeriodo"); sp.value=p[1]; sel.periodo=sp.value||null; resolveExam(); }
   } else if(p[0]==="recursos"){
@@ -1324,8 +1336,8 @@ function aeEnviar(){
   $("#aeResultado").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-function irAQuiz(){ QUIZ_MODE=true; go("select"); initSelect(); }
-function irAEvaluacionFormal(){ QUIZ_MODE=false; go("select"); initSelect(); }
+function irAQuiz(){ QUIZ_MODE=true; RUTA_PREF=null; go("select"); initSelect(); }
+function irAEvaluacionFormal(){ QUIZ_MODE=false; RUTA_PREF=null; go("select"); initSelect(); }
 function gruposDe(grado){ if(!grado) return []; var n=grado.replace(".°",""); return [n+"-1",n+"-2"]; }
 function aeActualizarGrupos(){
   var g=$("#aeGrado").value, gr=$("#aeGrupo");
