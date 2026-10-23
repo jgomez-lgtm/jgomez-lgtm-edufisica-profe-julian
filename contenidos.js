@@ -18,35 +18,39 @@
    ===================================================================== */
 
 var SECCIONES = {
-  evaluaciones: { orden:1, visible:true, titulo:"Evaluaciones",
+  ruta: { orden:1, visible:true, titulo:"Ruta: hábitos saludables",
+    desc:"Sigue el recorrido paso a paso: mitos, contenidos, tu plan y tu cierre",
+    promesa:"el recorrido de la unidad Hábitos de vida saludables, paso a paso." },
+
+  evaluaciones: { orden:2, visible:true, titulo:"Evaluaciones",
     desc:"Presenta la evaluación tipo Saber de tu grado y periodo.",
     promesa:"las evaluaciones de cada periodo, con tu nota y la revisión pregunta por pregunta." },
 
-  recursos: { orden:2, visible:true, titulo:"Recursos",
+  recursos: { orden:3, visible:true, titulo:"Recursos",
     desc:"Videos, guías y reglamentos por grado.",
     promesa:"los videos de los gestos técnicos, las guías de clase y los reglamentos de cada deporte, ordenados por grado." },
 
-  herramientas: { orden:3, visible:true, titulo:"Herramientas",
+  herramientas: { orden:4, visible:true, titulo:"Herramientas",
     desc:"Videos, lecturas y reglamentos deportivos con enlaces externos.",
     promesa:"un banco general de herramientas: videos explicativos, lecturas de apoyo y los reglamentos oficiales de los deportes que se trabajan en el área." },
 
-  retos: { orden:4, visible:true, titulo:"Retos",
+  retos: { orden:5, visible:true, titulo:"Retos",
     desc:"Tu ruta de retos por grado y por periodo.",
     promesa:"un reto de acondicionamiento cada semana —fuerza, flexibilidad y resistencia— con sus pasos, para hacer en casa o en clase." },
 
-  juego: { orden:5, visible:true, titulo:"Juego",
+  juego: { orden:6, visible:true, titulo:"Juego",
     desc:"Salta conos y balones. ¿Cuál es tu récord?",
     promesa:"un juego rápido de concentración: salta los obstáculos, no te distraigas y deja tu nombre en la tabla de récords." },
 
-  resultados: { orden:6, visible:true, titulo:"Resultados",
+  resultados: { orden:7, visible:true, titulo:"Resultados",
     desc:"Desempeño por competencia: grupo, grado y consolidado general.",
     promesa:"el tablero de resultados de las evaluaciones: el desempeño por competencia de tu grupo, de tu grado y el consolidado de todos los que ya presentaron." },
 
-  torneos: { orden:7, visible:true, titulo:"Torneos",
+  torneos: { orden:8, visible:true, titulo:"Torneos",
     desc:"Crea y consulta torneos interclases: fixture, resultados y posiciones.",
     promesa:"los torneos interclases de voleibol, microfútbol y baloncesto, con su fixture, resultados y tabla de posiciones." },
 
-  diario: { orden:8, visible:true, titulo:"Diario",
+  diario: { orden:9, visible:true, titulo:"Diario",
     desc:"Registra tus minutos de actividad física.",
     promesa:"tu diario de movimiento: los minutos de actividad física de cada día y cuánto llevas en la semana." }
 };
@@ -99,6 +103,40 @@ var HERRAMIENTAS = [
     descripcion:"Nociones generales sobre qué hacer ante golpes, esguinces y caídas comunes durante la práctica deportiva escolar.",
     url:"https://www.youtube.com/results?search_query=primeros+auxilios+básicos+lesiones+deportivas+escolares" }
 ];
+/* --- RUTA: HÁBITOS DE VIDA SALUDABLES (10.° y 11.°) -------------------
+   Los pasos del recorrido, en orden. Puedes cambiar los textos y tiempos.
+   botones: lo que hace cada botón. Destinos posibles:
+     "paso:N"            baja al paso N de la ruta
+     "quiz:Periodo N"    abre el quiz de ese periodo para el grado elegido
+     "recursos:habitos"  Recursos del grado, solo Hábitos de vida saludables
+     "guia"              abre la guía «Cómo verificar una afirmación»
+     "reto:P:S"          Retos del grado, periodo P, semana S
+     "diario"  /  "autoeval"                                              */
+var RUTA_PASOS = [
+  { titulo:"Empieza aquí", tiempo:"2 min",
+    hace:"Conoce el recorrido y cómo moverte por el portal.",
+    texto:"Bienvenido a la unidad Hábitos de vida saludables. Recorre los pasos en orden: cada botón te lleva a la parte del portal donde está la actividad. Cuando termines, vuelve con el botón Inicio (arriba a la derecha) y entra otra vez a la Ruta. Marca «Lo hice» en cada paso para ver tu avance.",
+    botones:[ { texto:"Comenzar", destino:"paso:2" } ] },
+  { titulo:"Mitos y realidades", tiempo:"5 min",
+    hace:"Pon a prueba lo que crees saber con un quiz de seis afirmaciones.",
+    botones:[ { texto:"Presentar el quiz", destino:"quiz:Periodo 2" } ] },
+  { titulo:"Aprende con fuentes confiables", tiempo:"10 min",
+    hace:"Revisa los materiales de la OMS y de la Academia Americana de Pediatría, y aprende a verificar lo que lees.",
+    botones:[ { texto:"Ver los recursos", destino:"recursos:habitos" },
+              { texto:"Guía: cómo verificar una afirmación", destino:"guia" } ] },
+  { titulo:"Diseña tu plan y registra tu movimiento", tiempo:"20 min la primera vez; luego un minuto diario",
+    hace:"Arma tu plan de cuatro semanas y anota cada día tus minutos de actividad física.",
+    botones:[ { texto:"Reto: Mi plan de cuatro semanas", destino:"reto:1:2" },
+              { texto:"Abrir el Diario", destino:"diario" } ] },
+  { titulo:"Crea y comparte", tiempo:"20 min",
+    hace:"Desmiente un mito con una fuente confiable y compártelo con tu curso.",
+    botones:[ { texto:"Reto: Desmiento un mito", destino:"reto:2:5" } ] },
+  { titulo:"Cierra tu recorrido", tiempo:"10 min",
+    hace:"Comprueba lo que aprendiste y valora tu propio proceso.",
+    botones:[ { texto:"Quiz: Chequeo saludable", destino:"quiz:Periodo 3" },
+              { texto:"Hacer mi autoevaluación", destino:"autoeval" } ] }
+];
+
 /* --- RECURSOS -------------------------------------------------------
    grado: agrupa las tarjetas. tipo: Video, Guía, Reglamento, Infografía…
    url: puede quedar vacía ("") si es solo un aviso.                    */
@@ -193,18 +231,21 @@ var RECURSOS = [
     url:"https://www.youtube.com/results?search_query=prevención+lesión+LCA+rodilla+deportistas+biomecánica" },
 
   /* ===== GRADO 10.° — Hábitos de vida saludables ===== */
-  { grado:"10.°", tipo:"Guía", titulo:"Directrices de la OMS sobre actividad física y comportamiento sedentario (2020)",
+  { grado:"10.°", tema:"Hábitos de vida saludables", tipo:"Guía", titulo:"Directrices de la OMS sobre actividad física y comportamiento sedentario (2020)",
     descripcion:"Cuánta actividad física necesitan los adolescentes: en promedio 60 minutos diarios de intensidad moderada a vigorosa y menos tiempo sentado frente a pantallas.",
     url:"https://www.who.int/publications/i/item/9789240015128" },
-  { grado:"10.°", tipo:"Artículo", titulo:"Alimentación saludable — OMS",
+  { grado:"10.°", tema:"Hábitos de vida saludables", tipo:"Artículo", titulo:"Alimentación saludable — OMS",
     descripcion:"Qué es una dieta sana: más frutas, verduras y cereales integrales, y menos azúcares libres, sal y grasas. Incluye recomendaciones por edad.",
     url:"https://www.who.int/es/news-room/fact-sheets/detail/healthy-diet" },
-  { grado:"10.°", tipo:"Artículo", titulo:"Bebidas energéticas y deportivas: lo que dice la Academia Americana de Pediatría",
+  { grado:"10.°", tema:"Hábitos de vida saludables", tipo:"Artículo", titulo:"Bebidas energéticas y deportivas: lo que dice la Academia Americana de Pediatría",
     descripcion:"Por qué el agua es la mejor forma de hidratarse en la actividad física y por qué los adolescentes no deben tomar bebidas energizantes.",
     url:"https://www.healthychildren.org/Spanish/news/Paginas/kids-should-not-consume-energy-drinks-and-rarely-need-sports-drinks-says-aap.aspx" },
-  { grado:"10.°", tipo:"Infografía", titulo:"¿Cuántas horas de sueño necesitas? — HealthyChildren (AAP)",
+  { grado:"10.°", tema:"Hábitos de vida saludables", tipo:"Infografía", titulo:"¿Cuántas horas de sueño necesitas? — HealthyChildren (AAP)",
     descripcion:"Los adolescentes de 13 a 18 años necesitan de 8 a 10 horas de sueño. Dormir bien mejora la memoria, la concentración y el rendimiento.",
     url:"https://www.healthychildren.org/Spanish/healthy-living/sleep/Paginas/Healthy-Sleep-Habits-How-Many-Hours-Does-Your-Child-Need.aspx" },
+  { grado:"10.°", tema:"Hábitos de vida saludables", tipo:"Guía", titulo:"Cómo verificar una afirmación sobre salud",
+    descripcion:"Cinco preguntas para saber si lo que lees o ves en redes sobre salud es confiable, con un ejemplo resuelto.",
+    url:"guia-verificar-afirmaciones.html" },
 
   /* ===== GRADO 11.° — Gestión de torneos y sistemas de competencia ===== */
   { grado:"11.°", tipo:"Artículo", titulo:"Sistemas de competencia: todos contra todos y eliminación directa",
@@ -220,18 +261,21 @@ var RECURSOS = [
     descripcion:"Comparación de los sistemas 4-2 y 5-1: estabilidad vs. potencia ofensiva, según el nivel del equipo.",
     url:"https://voleyporelmundo.com/2022/03/15/introduccion-a-la-tactica-2-sistemas-de-juego/" },
   /* ===== GRADO 11.° — Hábitos de vida saludables ===== */
-  { grado:"11.°", tipo:"Guía", titulo:"Directrices de la OMS sobre actividad física y comportamiento sedentario (2020)",
+  { grado:"11.°", tema:"Hábitos de vida saludables", tipo:"Guía", titulo:"Directrices de la OMS sobre actividad física y comportamiento sedentario (2020)",
     descripcion:"Cuánta actividad física necesitan los adolescentes: en promedio 60 minutos diarios de intensidad moderada a vigorosa y menos tiempo sentado frente a pantallas.",
     url:"https://www.who.int/publications/i/item/9789240015128" },
-  { grado:"11.°", tipo:"Artículo", titulo:"Alimentación saludable — OMS",
+  { grado:"11.°", tema:"Hábitos de vida saludables", tipo:"Artículo", titulo:"Alimentación saludable — OMS",
     descripcion:"Qué es una dieta sana: más frutas, verduras y cereales integrales, y menos azúcares libres, sal y grasas. Incluye recomendaciones por edad.",
     url:"https://www.who.int/es/news-room/fact-sheets/detail/healthy-diet" },
-  { grado:"11.°", tipo:"Artículo", titulo:"Bebidas energéticas y deportivas: lo que dice la Academia Americana de Pediatría",
+  { grado:"11.°", tema:"Hábitos de vida saludables", tipo:"Artículo", titulo:"Bebidas energéticas y deportivas: lo que dice la Academia Americana de Pediatría",
     descripcion:"Por qué el agua es la mejor forma de hidratarse en la actividad física y por qué los adolescentes no deben tomar bebidas energizantes.",
     url:"https://www.healthychildren.org/Spanish/news/Paginas/kids-should-not-consume-energy-drinks-and-rarely-need-sports-drinks-says-aap.aspx" },
-  { grado:"11.°", tipo:"Infografía", titulo:"¿Cuántas horas de sueño necesitas? — HealthyChildren (AAP)",
+  { grado:"11.°", tema:"Hábitos de vida saludables", tipo:"Infografía", titulo:"¿Cuántas horas de sueño necesitas? — HealthyChildren (AAP)",
     descripcion:"Los adolescentes de 13 a 18 años necesitan de 8 a 10 horas de sueño. Dormir bien mejora la memoria, la concentración y el rendimiento.",
-    url:"https://www.healthychildren.org/Spanish/healthy-living/sleep/Paginas/Healthy-Sleep-Habits-How-Many-Hours-Does-Your-Child-Need.aspx" }
+    url:"https://www.healthychildren.org/Spanish/healthy-living/sleep/Paginas/Healthy-Sleep-Habits-How-Many-Hours-Does-Your-Child-Need.aspx" },
+  { grado:"11.°", tema:"Hábitos de vida saludables", tipo:"Guía", titulo:"Cómo verificar una afirmación sobre salud",
+    descripcion:"Cinco preguntas para saber si lo que lees o ves en redes sobre salud es confiable, con un ejemplo resuelto.",
+    url:"guia-verificar-afirmaciones.html" }
 ];
 
 /* =====================================================================
@@ -840,6 +884,14 @@ var RETOS = [
          "Aplícala después de cada sesión durante la semana.",
          "Registra tus horas de sueño y observa cómo te sientes al entrenar."],
   evidencia:"Video de la rutina y tu registro de la semana." },
+
+{ nivel:"g1011", periodo:2, semana:5, titulo:"Desmiento un mito",
+  objetivo:"Comunicar a otros, con evidencia, por qué una afirmación popular sobre salud es un mito.",
+  pasos:["Elige un mito del quiz «Mitos y realidades» o uno que hayas visto en redes.",
+         "Busca una fuente confiable que lo respalde o lo desmienta y anótala.",
+         "Crea una pieza corta (afiche o video de máximo un minuto) que lo explique para tus compañeros.",
+         "Compártela con tu curso."],
+  evidencia:"La pieza terminada y el enlace a la fuente que usaste." },
 
 { nivel:"g1011", periodo:3, semana:1, titulo:"Diseño un torneo",
   objetivo:"Aplicar la gestión deportiva que trabajamos en clase.",

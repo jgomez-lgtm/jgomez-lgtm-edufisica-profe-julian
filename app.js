@@ -346,8 +346,8 @@ function evEliminar(id){
 /* ====== STATE ====== */
 var sel={grado:null,grupo:null,periodo:null}, exam=null, seq=[], idx=0, answers=[], student={nombre:"",documento:""};
 var secondsLeft=0, timerId=null, startedAt=null, submitted=false;
-var SCREENS=["inicio","home","select","identify","instructions","exam","results","recursos","herramientas","retos","juego","resultados","torneos","diario","profesor","autoeval"];
-var RUTAS={inicio:"inicio",evaluaciones:"home",recursos:"recursos",herramientas:"herramientas",retos:"retos",juego:"juego",resultados:"resultados",torneos:"torneos",diario:"diario",profesor:"profesor",autoeval:"autoeval"};
+var SCREENS=["inicio","home","select","identify","instructions","exam","results","recursos","herramientas","retos","juego","resultados","torneos","diario","profesor","autoeval","ruta"];
+var RUTAS={inicio:"inicio",evaluaciones:"home",recursos:"recursos",herramientas:"herramientas",retos:"retos",juego:"juego",resultados:"resultados",torneos:"torneos",diario:"diario",profesor:"profesor",autoeval:"autoeval",ruta:"ruta"};
 var $=function(s){return document.querySelector(s)};
 function el(t,c){var e=document.createElement(t);if(c)e.className=c;return e}
 function go(name){SCREENS.forEach(function(s){$("#s_"+s).classList.toggle("hidden",s!==name)});window.scrollTo(0,0)}
@@ -703,6 +703,8 @@ function route(){
   if(h==="diario")   renderDiario();
   if(h==="profesor") renderProfesor();
   if(h==="autoeval") renderAutoeval();
+  if(h==="inicio"||h==="ruta") RECURSOS_FILTRO=null;   // el filtro de Recursos solo vale al venir desde la Ruta
+  if(h==="ruta")     renderRuta();
   if(h==="inicio")   renderMenu();
   go(RUTAS[h]);
 }
@@ -719,6 +721,7 @@ var ICONOS={
  resultados:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><path d="M4 19V10"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M20 19H4"/></svg>',
  torneos:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><path d="M7 4h10v5a5 5 0 01-10 0z"/><path d="M7 6H4v1a3 3 0 003 3M17 6h3v1a3 3 0 01-3 3"/><path d="M10 20h4M12 14v6"/></svg>',
  diario:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M7 15h3l1.5-2 2 4L15 15h2"/></svg>',
+ ruta:'<svg width="21" height="21" viewBox="0 0 24 24" '+SVG+'><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7.5a3.5 3.5 0 000-7h-7a3.5 3.5 0 010-7H16"/></svg>',
  obra:'<svg width="24" height="24" viewBox="0 0 24 24" '+SVG+'><path d="M9.5 4.5l-5 5 3 3 5-5z"/><path d="M11 11l7.5 7.5a2 2 0 01-3 3L8 14"/><path d="M14.5 4.5l5 5"/></svg>'
 };
 
@@ -759,16 +762,26 @@ function enlace(u){ return u?'<a class="link" href="'+esc(u)+'" target="_blank" 
 function pill(t){ return t?'<span class="pill">'+esc(t)+'</span>':''; }
 
 /* ====== RECURSOS ====== */
+/* RECURSOS_FILTRO: {grado, tema}. Solo lo activa la Ruta; si es null, la
+   sección se ve completa, como siempre. */
+var RECURSOS_FILTRO=null;
 function renderRecursos(){
   var b=$("#body_recursos"), h=borrador("recursos");
   if(!RECURSOS.length){
     b.innerHTML=h+construccion("recursos");
     return;
   }
+  var lista=RECURSOS, F=RECURSOS_FILTRO;
+  if(F){
+    lista=RECURSOS.filter(function(r){ return r.grado===F.grado && r.tema===F.tema; });
+    h+='<div class="aviso" style="margin:0 0 18px"><b>Mostrando:</b> '+esc(F.tema)+' · '+esc(F.grado)+
+       '<div class="ruta-btns"><button type="button" class="btn-sm" onclick="irA(\'ruta\')">← Volver a la ruta</button>'+
+       '<button type="button" class="btn-sm" onclick="RECURSOS_FILTRO=null;renderRecursos()">Ver todos los recursos</button></div></div>';
+  }
   var grados=[];
-  RECURSOS.forEach(function(r){ var g=r.grado||"Para todos los grados"; if(grados.indexOf(g)<0) grados.push(g); });
+  lista.forEach(function(r){ var g=r.grado||"Para todos los grados"; if(grados.indexOf(g)<0) grados.push(g); });
   grados.forEach(function(g){
-    var items=RECURSOS.filter(function(r){ return (r.grado||"Para todos los grados")===g; });
+    var items=lista.filter(function(r){ return (r.grado||"Para todos los grados")===g; });
     h+='<div class="gsec"><div class="gt"><span>'+esc(g)+'</span></div><div class="rgrid">'+
       items.map(function(r){
         return '<div class="item">'+pill(r.tipo||"Recurso")+
@@ -778,6 +791,90 @@ function renderRecursos(){
       }).join("")+'</div></div>';
   });
   b.innerHTML=h;
+}
+
+/* ====== RUTA: HÁBITOS DE VIDA SALUDABLES ======
+   Los pasos están en RUTA_PASOS (contenidos.js). En este navegador solo se
+   guardan el grado elegido y las casillas «Lo hice»; ningún dato personal. */
+var RUTA_KEY="jmrp_ruta_habitos_v1", RUTA_GRADOS=["10.°","11.°"], RUTA_ESTADO={grado:"10.°",hechos:[]};
+function rutaLeer(){
+  var o={};
+  try{ o=JSON.parse(localStorage.getItem(RUTA_KEY)||"{}")||{}; }catch(e){ o={}; }
+  if(RUTA_GRADOS.indexOf(o.grado)<0) o.grado=RUTA_GRADOS[0];
+  if(!Array.isArray(o.hechos)) o.hechos=[];
+  return { grado:o.grado, hechos:o.hechos.map(function(x){ return x===true; }) };
+}
+function rutaGuardar(){ try{ localStorage.setItem(RUTA_KEY,JSON.stringify(RUTA_ESTADO)); }catch(e){} }
+function renderRuta(){
+  var b=$("#body_ruta"); if(!b) return;
+  RUTA_ESTADO=rutaLeer();
+  var g=RUTA_ESTADO.grado;
+  var h=borrador("ruta")+
+    '<div class="tabs" role="group" aria-label="Tu grado">'+RUTA_GRADOS.map(function(x){
+      var on=x===g;
+      return '<button type="button" class="tab'+(on?' on':'')+'" aria-pressed="'+on+'" onclick="rutaGrado(\''+x+'\')">Soy de '+esc(x)+
+             '<small>'+(on?'Tu grado':'Cambiar a '+esc(x))+'</small></button>';
+    }).join("")+'</div>'+
+    '<div class="aviso" style="margin:0 0 18px"><b>Tu avance:</b> <span id="rutaAvanceTxt"></span>'+
+    '<div class="progress" id="rutaAvance" role="progressbar" aria-label="Avance de la ruta" aria-valuemin="0" aria-valuemax="'+RUTA_PASOS.length+'" style="margin-top:8px;border-radius:999px">'+
+    '<div class="bar" id="rutaAvanceBar" style="border-radius:999px"></div></div></div>'+
+    '<ol class="ruta-lista">'+RUTA_PASOS.map(function(p,i){
+      var hecho=!!RUTA_ESTADO.hechos[i];
+      return '<li class="reto ruta-paso'+(hecho?' ruta-hecho':'')+'" id="rutaPaso'+(i+1)+'" tabindex="-1">'+
+        '<div class="rhead"><span class="rsem">Paso '+(i+1)+' de '+RUTA_PASOS.length+'</span>'+pill("⏱ "+p.tiempo)+'</div>'+
+        '<h3 class="rtit">'+esc(p.titulo)+'</h3>'+
+        '<p class="robj">'+esc(p.hace)+'</p>'+
+        (p.texto?'<p class="robj">'+esc(p.texto)+'</p>':'')+
+        '<div class="ruta-btns">'+(p.botones||[]).map(function(bt,k){
+          return '<button type="button" class="'+(k===0?'btn btn-primary':'btn-ghost')+'" onclick="rutaIr(\''+esc(bt.destino)+'\')">'+esc(bt.texto)+'</button>';
+        }).join("")+'</div>'+
+        '<label class="check" style="margin:14px 0 0"><input type="checkbox"'+(hecho?' checked':'')+' onchange="rutaMarcar('+i+',this.checked)"><span>Lo hice</span></label>'+
+      '</li>';
+    }).join("")+'</ol>';
+  b.innerHTML=h;
+  rutaPintarAvance();
+}
+function rutaPintarAvance(){
+  var n=RUTA_PASOS.length, k=0;
+  for(var i=0;i<n;i++) if(RUTA_ESTADO.hechos[i]) k++;
+  var t=$("#rutaAvanceTxt"), bar=$("#rutaAvanceBar"), pb=$("#rutaAvance");
+  if(t) t.textContent=k+" de "+n+" pasos ("+Math.round(k/n*100)+" %)";
+  if(bar) bar.style.width=(k/n*100)+"%";
+  if(pb) pb.setAttribute("aria-valuenow",k);
+}
+function rutaGrado(g){ if(RUTA_GRADOS.indexOf(g)<0) return; RUTA_ESTADO.grado=g; rutaGuardar(); renderRuta(); }
+function rutaMarcar(i,v){
+  RUTA_ESTADO.hechos[i]=!!v; rutaGuardar();
+  var li=$("#rutaPaso"+(i+1)); if(li) li.classList.toggle("ruta-hecho",!!v);
+  rutaPintarAvance();
+}
+function rutaIr(destino){
+  var g=RUTA_ESTADO.grado, p=String(destino).split(":");
+  if(p[0]==="paso"){
+    var e=$("#rutaPaso"+p[1]); if(e){ e.scrollIntoView({behavior:"smooth",block:"start"}); e.focus({preventScroll:true}); }
+  } else if(p[0]==="quiz"){
+    irAQuiz();                                  // misma pantalla de selección de siempre,
+    var sg=$("#selGrado"); sg.value=g;          // con el grado y el periodo ya elegidos:
+    if(sg.value===g){ sel.grado=g; fillGrupos(); var sp=$("#selPeriodo"); sp.value=p[1]; sel.periodo=sp.value||null; resolveExam(); }
+  } else if(p[0]==="recursos"){
+    RECURSOS_FILTRO={grado:g, tema:"Hábitos de vida saludables"}; irA("recursos");
+  } else if(p[0]==="guia"){
+    location.href="guia-verificar-afirmaciones.html";
+  } else if(p[0]==="reto"){
+    var per=parseInt(p[1],10), sem=parseInt(p[2],10);
+    RETO_SEL.grado=g; RETO_SEL.periodo=per; irA("retos");
+    var pos=retosDe(g,per).map(function(r){ return r.semana; }).indexOf(sem), intentos=0;
+    (function resaltar(){                       // espera a que la sección esté dibujada
+      var cards=document.querySelectorAll("#s_retos:not(.hidden) #retoLista .reto");
+      if(cards.length>pos && pos>=0){
+        var c=cards[pos]; c.scrollIntoView({behavior:"smooth",block:"center"});
+        c.style.outline="3px solid var(--gold)"; c.style.outlineOffset="3px";
+        setTimeout(function(){ c.style.outline=""; c.style.outlineOffset=""; },2500);
+      } else if(++intentos<20) setTimeout(resaltar,50);
+    })();
+  } else if(p[0]==="diario"||p[0]==="autoeval"){
+    irA(p[0]);
+  }
 }
 
 /* ====== HERRAMIENTAS ====== */
