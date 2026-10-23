@@ -107,7 +107,8 @@ var HERRAMIENTAS = [
    Los pasos del recorrido, en orden. Puedes cambiar los textos y tiempos.
    botones: lo que hace cada botón. Destinos posibles:
      "paso:N"            baja al paso N de la ruta
-     "quiz:Periodo N"    abre el quiz de ese periodo para el grado elegido
+     "quiz:Periodo N"    abre los quices de ese periodo para el grado elegido
+     "quiz:Periodo N:-fin"  igual, pero deja preseleccionado el quiz cuyo ID termina en "-fin"
      "recursos:habitos"  Recursos del grado, solo Hábitos de vida saludables
      "guia"              abre la guía «Cómo verificar una afirmación»
      "reto:P:S"          Retos del grado, periodo P, semana S
@@ -119,7 +120,7 @@ var RUTA_PASOS = [
     botones:[ { texto:"Comenzar", destino:"paso:2" } ] },
   { titulo:"Mitos y realidades", tiempo:"5 min",
     hace:"Pon a prueba lo que crees saber con un quiz de seis afirmaciones.",
-    botones:[ { texto:"Presentar el quiz", destino:"quiz:Periodo 2" } ] },
+    botones:[ { texto:"Presentar el quiz", destino:"quiz:Periodo 2:-p2-quiz" } ] },
   { titulo:"Aprende con fuentes confiables", tiempo:"10 min",
     hace:"Revisa los materiales de la OMS y de la Academia Americana de Pediatría, y aprende a verificar lo que lees.",
     botones:[ { texto:"Ver los recursos", destino:"recursos:habitos" },
@@ -133,7 +134,7 @@ var RUTA_PASOS = [
     botones:[ { texto:"Reto: Desmiento un mito", destino:"reto:2:5" } ] },
   { titulo:"Cierra tu recorrido", tiempo:"10 min",
     hace:"Comprueba lo que aprendiste y valora tu propio proceso.",
-    botones:[ { texto:"Quiz: Chequeo saludable", destino:"quiz:Periodo 3" },
+    botones:[ { texto:"Quiz: Chequeo saludable", destino:"quiz:Periodo 3:-p3-quiz" },
               { texto:"Hacer mi autoevaluación", destino:"autoeval" } ] }
 ];
 
